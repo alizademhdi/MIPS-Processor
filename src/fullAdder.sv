@@ -12,8 +12,6 @@ module fulladder(
 
     output [31:0] sum;
     output carry_out;
-  
-    wire [31:0] r;
 
     wire [31:0] sum;
     wire [31:0] carry;
