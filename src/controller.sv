@@ -258,6 +258,30 @@ module controller(
                 register_write = 1;
             end
 
+            J_code:
+            begin
+                destination_register = 0;
+                jump = 1;
+                branch = 0;
+                we_memory = 0;
+                ALU_src = 0;
+                ALU_OP = 5'b00100;
+                memory_to_register = 0;
+                register_write = 0;
+            end
+
+            JAL_code:
+            begin
+                destination_register = 0;
+                jump = 1;
+                branch = 0;
+                we_memory = 0;
+                ALU_src = 0;
+                ALU_OP = 5'b00100;
+                memory_to_register = 0;
+                register_write = 0;
+            end
+
 
             default:
             begin
