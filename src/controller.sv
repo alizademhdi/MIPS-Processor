@@ -82,9 +82,9 @@ module controller(
                 case (func)
                     XOR_func: ALU_OP = 5'b00000;
                     SLL_func: ALU_OP = 5'b00001;
-                    SLLV_func: ALU_OP = 5'b00001;
+                    SLLV_func: ALU_OP = 5'b11001;
                     SRL_func: ALU_OP = 5'b00010;
-                    SRLV_func: ALU_OP = 5'b00010;
+                    SRLV_func: ALU_OP = 5'b11010;
                     SRA_func: ALU_OP = 5'b00011;
                     ADD_func: ALU_OP= 5'b00100;
                     ADDU_func: ALU_OP= 5'b00100;
