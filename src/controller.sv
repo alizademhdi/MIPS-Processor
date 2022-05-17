@@ -1,4 +1,4 @@
-module controller(
+module Controller(
     destination_register,
     jump,
     branch,
