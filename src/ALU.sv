@@ -73,14 +73,14 @@ module ALU(
                 end
             BLEZ_OP:
                 begin
-                    if(data_in1 <= 0)
+                    if($signed(data_in1) <= 0)
                         data_out = 1;
                     else
                         data_out = 0;
                 end
             BGTZ_OP:
                 begin
-                    if(data_in1 > 0)
+                    if($signed(data_in1) > 0)
                         data_out = 1;
                     else
                         data_out = 0;
