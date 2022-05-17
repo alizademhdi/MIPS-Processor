@@ -24,6 +24,9 @@ module mips_core(
     output         mem_write_en;
     output reg     halted;
 
+
+    // Create Controller
+
     wire destination_register; // 1 for rd and 0 for rt
     wire jump;
     wire branch;
@@ -44,6 +47,9 @@ module mips_core(
         .register_write(register_write),
         .opcode(inst[31:26]),
         .func(inst[5:0]));
+
+
+    // Create register file
 
     wire [XLEN-1:0] write_data;
     wire [XLEN-1:0] rs_data;
@@ -74,13 +80,35 @@ module mips_core(
 
     end
 
+
+    // Create ALU
+
     Extender sign_extender(
         inst[15:0],
         imm_sign_extend,
-        1,
-        clk
+        1
     );
     reg [31:0] imm_sign_extend;
+
+    reg [31:0] data_in2;
+    wire zero;
+
+    ALU alu(
+        .data_out(write_data),
+        .zero(zero),
+        .ALU_OP(ALU_OP),
+        .data_in1(rs_data),
+        .data_in2(data_in2),
+        .shift_amount(inst[10:6])
+    );
+
+    always @(ALU_src)
+    begin
+        if (ALU_src)
+            data_in2 = imm_sign_extend;
+        else
+            data_in2 = rt_data;
+    end
 
 
 endmodule

@@ -12,7 +12,7 @@ module ALU(
     input wire [4:0] shift_amount;
 
     output reg [31:0] data_out;
-    output wire zero;
+    output reg zero;
 
 
     parameter XOR_OP = 5'b00000;
@@ -87,7 +87,7 @@ module ALU(
                 end
             BGEZ_OP:
                 begin
-                    if(data_in1 >= 0)
+                    if($signed(data_in1) >= 0)
                         data_out = 1;
                     else
                         data_out = 0;
@@ -95,7 +95,7 @@ module ALU(
             default: data_out = 0;
         endcase
 
-        zero = (data_out == 31'b0) ? 1 : 0;
+        zero = (data_out == 0) ? 1 : 0;
     end
 
 endmodule
