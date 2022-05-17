@@ -74,5 +74,12 @@ module mips_core(
 
     end
 
+    SignExtender sign_extender(
+        inst[15:0],
+        imm_sign_extend,
+        clk
+    );
+    reg [31:0] imm_sign_extend;
+
 
 endmodule
