@@ -30,6 +30,7 @@ module mips_core(
     wire destination_register; // 1 for rd and 0 for rt
     wire jump;
     wire branch;
+    wire jump_register;
     wire we_memory;
     wire memory_to_register;
     wire [4:0] ALU_OP;
@@ -40,6 +41,7 @@ module mips_core(
         .destination_register(destination_register),
         .jump(jump),
         .branch(branch),
+        .jump_register(jump_register),
         .we_memory(we_memory),
         .memory_to_register(memory_to_register),
         .ALU_OP(ALU_OP),

@@ -2,6 +2,7 @@ module Controller(
     destination_register,
     jump,
     branch,
+    jump_register,
     we_memory,
     memory_to_register,
     ALU_OP,
@@ -17,6 +18,7 @@ module Controller(
     output reg destination_register; // 1 for rd and 0 for rt
     output reg jump;
     output reg branch;
+    output reg jump_register;
     output reg we_memory;
     output reg memory_to_register;
     output reg [4:0] ALU_OP;
@@ -74,6 +76,7 @@ module Controller(
                 destination_register = 1;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 0;
                 memory_to_register = 0;
@@ -96,7 +99,10 @@ module Controller(
                     NOR_func: ALU_OP = 5'b01001;
                     AND_func: ALU_OP = 5'b01010;
                     SLT_func: ALU_OP = 5'b01011;
-                    JR_func: ALU_OP = 5'b01100;
+                    JR_func: begin
+                        ALU_OP = 5'b01100;
+                        jump_register = 1;
+                    end
                     default: ALU_OP = 5'b00100;
                 endcase
 
@@ -107,6 +113,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
@@ -119,6 +126,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01010;
@@ -131,6 +139,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00000;
@@ -143,6 +152,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01000;
@@ -155,6 +165,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
@@ -167,6 +178,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 1;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
@@ -179,6 +191,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 1;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01101;
@@ -191,6 +204,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 1;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01110;
@@ -203,6 +217,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 1;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01111;
@@ -215,6 +230,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 1;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b10000;
@@ -227,6 +243,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 1;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b10001;
@@ -239,6 +256,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01011;
@@ -251,6 +269,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b10010;
@@ -263,6 +282,7 @@ module Controller(
                 destination_register = 0;
                 jump = 1;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 0;
                 ALU_OP = 5'b00100;
@@ -275,6 +295,7 @@ module Controller(
                 destination_register = 0;
                 jump = 1;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 0;
                 ALU_OP = 5'b00100;
@@ -288,6 +309,7 @@ module Controller(
                 destination_register = 0;
                 jump = 0;
                 branch = 0;
+                jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00000;
