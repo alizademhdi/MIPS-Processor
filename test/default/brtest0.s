@@ -1,16 +1,17 @@
         # Basic branch test
 	.text
+        .set noreorder
 
 main:
         addiu $v0, $zero, 0xa
-l_0:    
+l_0:
         addiu $5, $zero, 1
         j l_1
         addiu $10, $10, 0xf00
         ori $0, $0, 0
         ori $0, $0, 0
         addiu $5, $zero, 100
-        syscall        
+        syscall
 l_1:
         bne $zero, $zero, l_3
         ori $0, $0, 0
@@ -30,6 +31,6 @@ l_3:
 l_4:
         addiu $7, $zero, 0xd00d
         syscall
-        
-         
+
+
         

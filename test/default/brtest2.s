@@ -1,9 +1,10 @@
         # Basic branch test
 	.text
+        .set noreorder
 
 main:
         addiu $v0, $zero, 0xa
-l_0:    
+l_0:
         j l_1
 l_1:
         bne $zero, $zero, l_3
@@ -17,6 +18,6 @@ l_3:
 l_4:
         addiu $7, $zero, 0xd00d
         syscall
-        
-         
+
+
         
