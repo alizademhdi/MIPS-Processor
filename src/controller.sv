@@ -99,7 +99,8 @@ module Controller(
                     NOR_func: ALU_OP = 5'b01001;
                     AND_func: ALU_OP = 5'b01010;
                     SLT_func: ALU_OP = 5'b01011;
-                    JR_func: begin
+                    JR_func:
+                    begin
                         ALU_OP = 5'b01100;
                         jump_register = 1;
                     end

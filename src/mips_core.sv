@@ -11,7 +11,6 @@ module mips_core(
     rst_b
 );
 
-    parameter XLEN = 32, size = 32;
 
     input   [31:0] inst;
     input   [7:0]  mem_data_out[0:3];
@@ -24,6 +23,11 @@ module mips_core(
     output         mem_write_en;
     output reg     halted;
 
+    assign mem_data_in[0] = rt_data[31:24];
+    assign mem_data_in[1] = rt_data[23:16];
+    assign mem_data_in[2] = rt_data[15:8];
+    assign mem_data_in[3] = rt_data[7:0];
+    assign mem_addr = ALU_result;
 
     // Create Controller
 
@@ -31,7 +35,6 @@ module mips_core(
     wire jump;
     wire branch;
     wire jump_register;
-    wire we_memory;
     wire memory_to_register;
     wire [4:0] ALU_OP;
     wire ALU_src;
@@ -42,20 +45,21 @@ module mips_core(
         .jump(jump),
         .branch(branch),
         .jump_register(jump_register),
-        .we_memory(we_memory),
+        .we_memory(mem_write_en),
         .memory_to_register(memory_to_register),
         .ALU_OP(ALU_OP),
         .ALU_src(ALU_src),
         .register_write(register_write),
         .opcode(inst[31:26]),
-        .func(inst[5:0]));
+        .func(inst[5:0])
+    );
 
 
     // Create register file
 
-    wire [XLEN-1:0] write_data;
-    wire [XLEN-1:0] rs_data;
-    wire [XLEN-1:0] rt_data;
+    wire [31:0] rs_data;
+    wire [31:0] rt_data;
+    reg [31:0] rd_data;
     reg [4:0] rd_num;
     wire reg_write_enable;
 
@@ -65,12 +69,22 @@ module mips_core(
         .rs_num(inst[25:21]),
         .rt_num(inst[20:16]),
         .rd_num(rd_num),
-        .rd_data(write_data),
+        .rd_data(rd_data),
         .rd_we(reg_write_enable),
         .clk(clk),
         .rst_b(rst_b),
         .halted(halted)
     );
+
+    always @(memory_to_register)
+    begin
+
+        if (memory_to_register)
+            rd_data = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+        else
+            rd_data = ALU_result;
+
+    end
 
     always @(inst)
     begin
@@ -90,13 +104,15 @@ module mips_core(
         imm_sign_extend,
         1
     );
+
     reg [31:0] imm_sign_extend;
 
+    wire [31:0] ALU_result;
     reg [31:0] data_in2;
     wire zero;
 
     ALU alu(
-        .data_out(write_data),
+        .data_out(ALU_result),
         .zero(zero),
         .ALU_OP(ALU_OP),
         .data_in1(rs_data),
@@ -111,6 +127,21 @@ module mips_core(
         else
             data_in2 = rt_data;
     end
+
+
+    // Create PC controller
+
+    pc_controller pc_controller(
+        .pc(inst_addr),
+        .jea(inst[25:0]),
+        .branch(branch),
+        .jump(jump),
+        .jump_register(jump_register),
+        .rs_data(rs_data),
+        .imm_sign_extend(imm_sign_extend),
+        .zero(zero),
+        .clk(clk)
+    );
 
 
 endmodule

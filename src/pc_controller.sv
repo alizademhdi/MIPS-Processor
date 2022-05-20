@@ -21,7 +21,7 @@ module pc_controller(
     output reg [31:0] pc;
 
     initial begin
-		pc <= 32'd0;
+		pc = 32'd0;
 	end
 
 	wire [31:0] pc4;  // PC + 4
