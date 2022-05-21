@@ -109,22 +109,19 @@ module mips_core(
 
     end
 
-    // Create ALU
+
+    // Create imm extender
+
+    reg [31:0] imm_extend;
 
     Extender sign_extender(
-        inst[15:0],
-        imm_sign_extend,
-        1
+        .num(inst[15:0]),
+        .extended(imm_extend),
+        .is_unsign_extend(is_unsigned)
     );
 
-    Extender unsign_extender(
-        inst[15:0],
-        imm_unsign_extend,
-        0
-    );
 
-    reg [31:0] imm_sign_extend;
-    reg [31:0] imm_unsign_extend;
+    // Create ALU
 
     wire [31:0] ALU_result;
     reg [31:0] data_in2;
@@ -142,10 +139,7 @@ module mips_core(
     always @(ALU_src)
     begin
         if (ALU_src) begin
-            if (is_unsigned)
-                data_in2 = imm_unsign_extend;
-            else
-                data_in2 = imm_sign_extend;
+            data_in2 = imm_extend;
         end else
             data_in2 = rt_data;
     end
@@ -160,7 +154,7 @@ module mips_core(
         .jump(jump),
         .jump_register(jump_register),
         .rs_data(rs_data),
-        .imm_sign_extend(imm_sign_extend),
+        .imm_sign_extend(imm_extend),
         .zero(zero),
         .clk(clk)
     );

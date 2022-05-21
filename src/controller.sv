@@ -125,7 +125,7 @@ module Controller(
                 register_write = 1;
                 is_unsigned = 0;
             end
-            
+
             ADDIU_code:
             begin
                 destination_register = 0;
@@ -151,7 +151,7 @@ module Controller(
                 ALU_OP = 5'b01010;
                 memory_to_register = 0;
                 register_write = 1;
-                is_unsigned = 0;
+                is_unsigned = 1;
             end
 
             XORI_code:
@@ -165,7 +165,7 @@ module Controller(
                 ALU_OP = 5'b00000;
                 memory_to_register = 0;
                 register_write = 1;
-                is_unsigned = 0;
+                is_unsigned = 1;
             end
 
             ORI_code:
@@ -179,7 +179,7 @@ module Controller(
                 ALU_OP = 5'b01000;
                 memory_to_register = 0;
                 register_write = 1;
-                is_unsigned = 0;
+                is_unsigned = 1;
             end
 
             LW_code:
