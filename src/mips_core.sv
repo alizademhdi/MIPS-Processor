@@ -23,10 +23,10 @@ module mips_core(
     output         mem_write_en;
     output reg     halted;
 
-    assign mem_data_in[0] = rt_data[31:24];
-    assign mem_data_in[1] = rt_data[23:16];
-    assign mem_data_in[2] = rt_data[15:8];
-    assign mem_data_in[3] = rt_data[7:0];
+    assign mem_data_in[0] = rt_data[7:0];
+    assign mem_data_in[1] = rt_data[15:8];
+    assign mem_data_in[2] = rt_data[23:16];
+    assign mem_data_in[3] = rt_data[31:24];
     assign mem_addr = ALU_result;
 
 
