@@ -47,7 +47,7 @@ module regfile(
 
 			$display("=== Simulation Cycle %0d ===", $time/2);
 			$display("*** RegisterFile dump ***");
-			// $fdisplay(fd, "*** RegisterFile dump ***");
+			$fdisplay(fd, "*** RegisterFile dump ***");
 
 			for(i = 0; i < size; i = i+1) begin
 				$display("r%2d = 0x%8x", i, data[i]);
