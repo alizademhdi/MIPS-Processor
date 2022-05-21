@@ -20,9 +20,9 @@ module pc_controller(
 
     output reg [31:0] pc;
 
-    initial begin
+
+    initial
 		pc = 32'd0;
-	end
 
 	wire [31:0] pc4;  // PC + 4
 	assign pc4 = pc + 4;

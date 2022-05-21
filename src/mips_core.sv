@@ -29,6 +29,18 @@ module mips_core(
     assign mem_data_in[3] = rt_data[7:0];
     assign mem_addr = ALU_result;
 
+
+    // halted
+
+    always_ff @(posedge clk, negedge rst_b)
+    begin
+        if(rst_b == 0)
+            halted <= 0;
+        else
+            halted <= 1;
+    end
+
+
     // Create Controller
 
     wire destination_register; // 1 for rd and 0 for rt
