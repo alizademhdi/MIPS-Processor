@@ -8,6 +8,7 @@ module Controller(
     ALU_OP,
     ALU_src,
     register_write,
+    is_unsigned,
     opcode,
     func
 );
@@ -24,6 +25,7 @@ module Controller(
     output reg [4:0] ALU_OP;
     output reg ALU_src;
     output reg register_write;
+    output reg is_unsigned;
 
     //R type
     parameter Rtype_code = 6'b000000;
@@ -81,6 +83,7 @@ module Controller(
                 ALU_src = 0;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
 
                 case (func)
                     XOR_func: ALU_OP = 5'b00000;
@@ -109,7 +112,7 @@ module Controller(
 
             end
 
-            ADDI_code, ADDIU_code:
+            ADDI_code:
             begin
                 destination_register = 0;
                 jump = 0;
@@ -120,6 +123,21 @@ module Controller(
                 ALU_OP = 5'b00100;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
+            end
+            
+            ADDIU_code:
+            begin
+                destination_register = 0;
+                jump = 0;
+                branch = 0;
+                jump_register = 0;
+                we_memory = 0;
+                ALU_src = 1;
+                ALU_OP = 5'b00100;
+                memory_to_register = 0;
+                register_write = 1;
+                is_unsigned = 1;
             end
 
             ANDI_code:
@@ -133,6 +151,7 @@ module Controller(
                 ALU_OP = 5'b01010;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
             end
 
             XORI_code:
@@ -146,6 +165,7 @@ module Controller(
                 ALU_OP = 5'b00000;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
             end
 
             ORI_code:
@@ -159,6 +179,7 @@ module Controller(
                 ALU_OP = 5'b01000;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
             end
 
             LW_code:
@@ -172,6 +193,7 @@ module Controller(
                 ALU_OP = 5'b00100;
                 memory_to_register = 1;
                 register_write = 1;
+                is_unsigned = 0;
             end
 
             SW_code:
@@ -185,6 +207,7 @@ module Controller(
                 ALU_OP = 5'b00100;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             BEQ_code:
@@ -198,6 +221,7 @@ module Controller(
                 ALU_OP = 5'b01101;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             BNE_code:
@@ -211,6 +235,7 @@ module Controller(
                 ALU_OP = 5'b01110;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             BLEZ_code:
@@ -224,6 +249,7 @@ module Controller(
                 ALU_OP = 5'b01111;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             BGTZ_code:
@@ -237,6 +263,7 @@ module Controller(
                 ALU_OP = 5'b10000;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             BGEZ_code:
@@ -250,6 +277,7 @@ module Controller(
                 ALU_OP = 5'b10001;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             SLTI_code:
@@ -263,6 +291,7 @@ module Controller(
                 ALU_OP = 5'b01011;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
             end
 
             LUI_code:
@@ -276,6 +305,7 @@ module Controller(
                 ALU_OP = 5'b10010;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 1;
             end
 
             J_code:
@@ -289,6 +319,7 @@ module Controller(
                 ALU_OP = 5'b00100;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
             JAL_code:
@@ -302,6 +333,7 @@ module Controller(
                 ALU_OP = 5'b00100;
                 memory_to_register = 0;
                 register_write = 0;
+                is_unsigned = 0;
             end
 
 
@@ -316,6 +348,7 @@ module Controller(
                 ALU_OP = 5'b00000;
                 memory_to_register = 0;
                 register_write = 1;
+                is_unsigned = 0;
             end
         endcase
     end

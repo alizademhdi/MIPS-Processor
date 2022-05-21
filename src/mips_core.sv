@@ -32,12 +32,12 @@ module mips_core(
 
     // halted
 
-    always_ff @(posedge clk, negedge rst_b)
+    always @(inst)
     begin
-        if(rst_b == 0)
-            halted <= 0;
+        if(inst == 32'h000c)
+            halted = 1;
         else
-            halted <= 1;
+            halted = 0;
     end
 
 
@@ -51,6 +51,7 @@ module mips_core(
     wire [4:0] ALU_OP;
     wire ALU_src;
     wire register_write;
+    wire is_unsigned;
 
     Controller controller(
         .destination_register(destination_register),
@@ -62,6 +63,7 @@ module mips_core(
         .ALU_OP(ALU_OP),
         .ALU_src(ALU_src),
         .register_write(register_write),
+        .is_unsigned(is_unsigned),
         .opcode(inst[31:26]),
         .func(inst[5:0])
     );
@@ -73,7 +75,6 @@ module mips_core(
     wire [31:0] rt_data;
     reg [31:0] rd_data;
     reg [4:0] rd_num;
-    wire reg_write_enable;
 
     regfile regs(
         .rs_data(rs_data),
@@ -82,7 +83,7 @@ module mips_core(
         .rt_num(inst[20:16]),
         .rd_num(rd_num),
         .rd_data(rd_data),
-        .rd_we(reg_write_enable),
+        .rd_we(register_write),
         .clk(clk),
         .rst_b(rst_b),
         .halted(halted)
@@ -108,7 +109,6 @@ module mips_core(
 
     end
 
-
     // Create ALU
 
     Extender sign_extender(
@@ -117,7 +117,14 @@ module mips_core(
         1
     );
 
+    Extender unsign_extender(
+        inst[15:0],
+        imm_unsign_extend,
+        0
+    );
+
     reg [31:0] imm_sign_extend;
+    reg [31:0] imm_unsign_extend;
 
     wire [31:0] ALU_result;
     reg [31:0] data_in2;
@@ -134,9 +141,12 @@ module mips_core(
 
     always @(ALU_src)
     begin
-        if (ALU_src)
-            data_in2 = imm_sign_extend;
-        else
+        if (ALU_src) begin
+            if (is_unsigned)
+                data_in2 = imm_unsign_extend;
+            else
+                data_in2 = imm_sign_extend;
+        end else
             data_in2 = rt_data;
     end
 

@@ -3,7 +3,7 @@
         # your basic functionality.
         # No overflow exceptions should occur
 	.text
-main:   
+main:
         addiu   $2, $zero, 1024
         addu    $3, $2, $2
         or      $4, $3, $2
@@ -21,6 +21,6 @@ main:
         lui     $17, 100
         addiu   $v0, $zero, 0xa
         syscall
-        
-        
-                        
+
+
+
