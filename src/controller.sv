@@ -4,7 +4,7 @@ module Controller(
     branch,
     jump_register,
     we_memory,
-    memory_to_register,
+    register_src,
     ALU_OP,
     ALU_src,
     register_write,
@@ -16,12 +16,12 @@ module Controller(
     input wire [5:0] opcode;
     input wire [5:0] func;
 
-    output reg destination_register; // 1 for rd and 0 for rt
+    output reg [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
     output reg jump;
     output reg branch;
     output reg jump_register;
     output reg we_memory;
-    output reg memory_to_register;
+    output reg [1:0] register_src; // 01 for memory and 00 for ALU result and 10 for PC
     output reg [4:0] ALU_OP;
     output reg ALU_src;
     output reg register_write;
@@ -75,13 +75,13 @@ module Controller(
         case (opcode)
             Rtype_code:
             begin
-                destination_register = 1;
+                destination_register = 2'b01;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 0;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 0;
 
@@ -114,239 +114,239 @@ module Controller(
 
             ADDI_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 0;
             end
 
             ADDIU_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 1;
             end
 
             ANDI_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01010;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 1;
             end
 
             XORI_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00000;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 1;
             end
 
             ORI_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01000;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 1;
             end
 
             LW_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
-                memory_to_register = 1;
+                register_src = 2'b01;
                 register_write = 1;
                 is_unsigned = 0;
             end
 
             SW_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 1;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             BEQ_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01101;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             BNE_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01110;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             BLEZ_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01111;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             BGTZ_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b10000;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             BGEZ_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b10001;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             SLTI_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b01011;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 0;
             end
 
             LUI_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b10010;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 1;
             end
 
             J_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 1;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 0;
                 ALU_OP = 5'b00100;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 0;
                 is_unsigned = 0;
             end
 
             JAL_code:
             begin
-                destination_register = 0;
+                destination_register = 2'b10;
                 jump = 1;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 0;
                 ALU_OP = 5'b00100;
-                memory_to_register = 0;
-                register_write = 0;
+                register_src = 2'b10;
+                register_write = 1;
                 is_unsigned = 0;
             end
 
 
             default:
             begin
-                destination_register = 0;
+                destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
                 we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00000;
-                memory_to_register = 0;
+                register_src = 2'b00;
                 register_write = 1;
                 is_unsigned = 0;
             end

@@ -43,11 +43,11 @@ module mips_core(
 
     // Create Controller
 
-    wire destination_register; // 1 for rd and 0 for rt
+    wire [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
     wire jump;
     wire branch;
     wire jump_register;
-    wire memory_to_register;
+    wire [1:0] register_src;
     wire [4:0] ALU_OP;
     wire ALU_src;
     wire register_write;
@@ -59,7 +59,7 @@ module mips_core(
         .branch(branch),
         .jump_register(jump_register),
         .we_memory(mem_write_en),
-        .memory_to_register(memory_to_register),
+        .register_src(register_src),
         .ALU_OP(ALU_OP),
         .ALU_src(ALU_src),
         .register_write(register_write),
@@ -89,23 +89,29 @@ module mips_core(
         .halted(halted)
     );
 
-    always @(memory_to_register)
+    always @(register_src)
     begin
 
-        if (memory_to_register)
-            rd_data = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
-        else
-            rd_data = ALU_result;
+        case (register_src)
+            2'b00: rd_data = ALU_result;
+            2'b01: rd_data = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+            2'b10: rd_data = inst_addr + 4;
+            default:
+                rd_data = ALU_result;
+        endcase
 
     end
 
     always @(inst)
     begin
 
-        if (destination_register)
-            rd_num = inst[15:11];
-        else
-            rd_num = inst[20:16];
+        case (destination_register)
+            2'b00: rd_num = inst[20:16];
+            2'b01: rd_num = inst[15:11];
+            2'b10: rd_num = 5'b11111;
+            default:
+                rd_num = inst[20:16];
+        endcase
 
     end
 
