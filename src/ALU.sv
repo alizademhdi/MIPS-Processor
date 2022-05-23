@@ -56,7 +56,6 @@ module ALU(
             AND_OP: data_out = data_in1 & data_in2;
             SLT_OP: data_out = $signed(data_in1) < $signed(data_in2) ? 1 : 0;
             LUI_OP: data_out = {data_in2[15:0], 16'b0};
-            //JR_OP: data_out = $signed(data_in1) < $signed(data_in2) ? 1 : 0; I dont know!!!
             BEQ_OP:
                 begin
                     if(data_in1 == data_in2)
