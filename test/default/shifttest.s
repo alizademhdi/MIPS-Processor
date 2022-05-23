@@ -1,6 +1,6 @@
         # Basic shift tests
 	.text
-main:   
+main:
         ori $3, $zero, 65535
         sll   $4, $3, 16
         sll   $5, $3, 6

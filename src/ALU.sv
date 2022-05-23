@@ -38,6 +38,27 @@ module ALU(
     parameter LUI_OP = 5'b10010;
 
 
+    // Create arethmetic shifter to shifting data_in2 for sra
+
+    wire [31:0] shifted_data_in2;
+
+    ArithmeticShifter a(
+        .data(data_in2),
+        .shift_amount(shift_amount),
+        .output_data(shifted_data_in2)
+    );
+
+
+    // Create signed comparator for compare signed data_in1 and signed data_in2
+
+    wire [31:0] is_data1_greater_than_data2;
+
+    SignedComparator signedComparator(
+        .data_in1(data_in1),
+        .data_in2(data_in2),
+        .g(is_data1_greater_than_data2)
+    );
+
     always @(*)
     begin
         case (ALU_OP)
@@ -46,7 +67,7 @@ module ALU(
             SLLV_OP: data_out = data_in2 << data_in1;
             SRL_OP: data_out = data_in2 >> shift_amount;
             SRLV_OP: data_out = data_in2 >> data_in1;
-            SRA_OP: data_out = $signed($signed(data_in2) >>> shift_amount);
+            SRA_OP: data_out = shifted_data_in2;
             ADD_OP: data_out = data_in1 + data_in2;
             SUB_OP: data_out = data_in1 - data_in2;
             MULT_OP: data_out = data_in1 * data_in2;
@@ -54,7 +75,7 @@ module ALU(
             OR_OP: data_out = data_in1 | data_in2;
             NOR_OP: data_out = ~(data_in1 | data_in2);
             AND_OP: data_out = data_in1 & data_in2;
-            SLT_OP: data_out = $signed(data_in1) < $signed(data_in2) ? 1 : 0;
+            SLT_OP: data_out = ~is_data1_greater_than_data2;
             LUI_OP: data_out = {data_in2[15:0], 16'b0};
             BEQ_OP:
                 begin
@@ -72,21 +93,21 @@ module ALU(
                 end
             BLEZ_OP:
                 begin
-                    if($signed(data_in1) <= 0)
+                    if(data_in1[31] == 1 || data_in1 == 32'b0)
                         data_out = 1;
                     else
                         data_out = 0;
                 end
             BGTZ_OP:
                 begin
-                    if($signed(data_in1) > 0)
+                    if(data_in1[31] == 0 && data_in1 != 32'b0)
                         data_out = 1;
                     else
                         data_out = 0;
                 end
             BGEZ_OP:
                 begin
-                    if($signed(data_in1) >= 0)
+                    if(data_in1[31] == 0)
                         data_out = 1;
                     else
                         data_out = 0;
