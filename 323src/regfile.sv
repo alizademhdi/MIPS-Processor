@@ -57,5 +57,4 @@ module regfile(
 			$fclose(fd);
 		end
 	end
-
 endmodule

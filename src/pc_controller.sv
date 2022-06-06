@@ -7,6 +7,7 @@ module pc_controller(
     rs_data,
     imm_sign_extend,
     zero,
+    pc_enable,
     clk
 );
     input wire [25:0] jea;
@@ -16,6 +17,7 @@ module pc_controller(
     input wire [31:0] rs_data;
     input wire [31:0] imm_sign_extend;
     input wire zero;
+    input wire pc_enable;
     input wire clk;
 
     output reg [31:0] pc;
@@ -34,14 +36,16 @@ module pc_controller(
     assign baddr = (imm_sign_extend << 2) + pc4;
 
     always_ff @(posedge clk) begin
-        if (jump == 1)
-            pc <= jaddr;
-        else if ((branch && zero) == 1)
-            pc <= baddr;
-        else if (jump_register == 1)
-            pc <= rs_data;
-        else
-            pc <= pc4;
+        if (pc_enable) begin
+            if (jump == 1)
+                pc <= jaddr;
+            else if ((branch && zero) == 1)
+                pc <= baddr;
+            else if (jump_register == 1)
+                pc <= rs_data;
+            else
+                pc <= pc4;
+        end
     end
 endmodule
 

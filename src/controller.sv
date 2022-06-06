@@ -9,12 +9,15 @@ module Controller(
     ALU_src,
     register_write,
     is_unsigned,
+    pc_enable,
     opcode,
-    func
+    func,
+    clk
 );
 
     input wire [5:0] opcode;
     input wire [5:0] func;
+    input wire clk;
 
     output reg [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
     output reg jump;
@@ -26,6 +29,18 @@ module Controller(
     output reg ALU_src;
     output reg register_write;
     output reg is_unsigned;
+    output reg pc_enable;
+
+    reg [3:0] p_state = S0;
+    reg [3:0] n_state;
+
+    parameter S0 = 4'b0000;
+    parameter S1 = 4'b0001;
+    parameter S2 = 4'b0010;
+    parameter S3 = 4'b0011;
+    parameter S4 = 4'b0100;
+    parameter S5 = 4'b0101;
+    parameter S6 = 4'b0110;
 
     //R type
     parameter Rtype_code = 6'b000000;
@@ -69,10 +84,14 @@ module Controller(
     parameter J_code = 6'b000010;
     parameter JAL_code = 6'b000011;
 
-
-    always @(opcode)
+    always @(posedge clk)
     begin
-        case (opcode)
+        p_state = n_state;
+    end
+
+    always @(*)
+    begin
+    case (opcode)
             Rtype_code:
             begin
                 destination_register = 2'b01;
@@ -109,7 +128,6 @@ module Controller(
                     end
                     default: ALU_OP = 5'b00100;
                 endcase
-
             end
 
             ADDI_code:
@@ -192,7 +210,7 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b01;
-                register_write = 1;
+                register_write = 1'b0;
                 is_unsigned = 0;
             end
 
@@ -202,11 +220,11 @@ module Controller(
                 jump = 0;
                 branch = 0;
                 jump_register = 0;
-                we_memory = 1;
+                we_memory = 0;
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b00;
-                register_write = 0;
+                register_write = 1'b0;
                 is_unsigned = 0;
             end
 
@@ -336,7 +354,6 @@ module Controller(
                 is_unsigned = 0;
             end
 
-
             default:
             begin
                 destination_register = 2'b00;
@@ -353,4 +370,56 @@ module Controller(
         endcase
     end
 
+    always_latch @(p_state or opcode)
+    begin
+        case (p_state)
+            S0: begin
+                if (opcode == LW_code) begin
+                    n_state = S1;
+                    pc_enable = 1'b0;
+                end
+                else if (opcode == SW_code) begin
+                    n_state = S1;
+                    pc_enable = 1'b0;
+                    we_memory = 1'b1;
+                end
+                else begin
+                    n_state = S0;
+                    pc_enable = 1'b1;
+                end
+                    // if (cache_hit) begin
+                    //     pc_enable = 1'b1;
+                    //     n_state = S0;
+                    // end
+            end
+
+            S1: begin
+                we_memory = 1'b0;
+                n_state = S2;
+            end
+
+            S2: begin
+                n_state = S3;
+            end
+
+            S3: begin
+                n_state = S4;
+            end
+
+            S4: begin
+                if (opcode == LW_code) begin
+                    register_write = 1'b1;
+                    pc_enable = 1'b1;
+                    n_state = S0;
+                end
+                else if (opcode == SW_code) begin
+                    n_state = S0;
+                    pc_enable = 1'b1;
+                end
+            end
+
+            default: n_state = S0;
+
+        endcase
+    end
 endmodule

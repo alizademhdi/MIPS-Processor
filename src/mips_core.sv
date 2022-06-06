@@ -52,6 +52,7 @@ module mips_core(
     wire ALU_src;
     wire register_write;
     wire is_unsigned;
+    wire pc_enable;
 
     Controller controller(
         .destination_register(destination_register),
@@ -64,8 +65,10 @@ module mips_core(
         .ALU_src(ALU_src),
         .register_write(register_write),
         .is_unsigned(is_unsigned),
+        .pc_enable(pc_enable),
         .opcode(inst[31:26]),
-        .func(inst[5:0])
+        .func(inst[5:0]),
+        .clk(clk)
     );
 
 
@@ -162,8 +165,10 @@ module mips_core(
         .rs_data(rs_data),
         .imm_sign_extend(imm_extend),
         .zero(zero),
+        .pc_enable(pc_enable),
         .clk(clk)
     );
 
+    // initial $monitor("time: %d, inst_addr: %d, opcode: %b", $time, inst_addr, inst[31:26]);
 
 endmodule

@@ -1,0 +1,179 @@
+docker run -ti -v /home/mohammad/Project/project-shalgham:/work												\
+		verilator/verilator:latest --exe --build --cc --top mips_machine	\
+				-Wno-BLKLOOPINIT											\
+				`find src 323src -iname '*.v' -o -iname '*.sv'`				\
+				323src/sim_main.cpp
+make: Entering directory '/work/obj_dir'
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-shadow      -std=gnu++14 -Os -c -o Vmips_machine__ALL.o Vmips_machine__ALL.cpp
+echo "" > Vmips_machine__ALL.verilator_deplist.tmp
+Archive ar -rcs Vmips_machine__ALL.a Vmips_machine__ALL.o
+g++    sim_main.o verilated.o Vmips_machine__ALL.a      -o Vmips_machine
+rm Vmips_machine__ALL.verilator_deplist.tmp
+make: Leaving directory '/work/obj_dir'
+cp test/default/memtest0.mem output/instructions.mem
+./obj_dir/Vmips_machine
+time:                    1, clk: 1, pc_controller: 00000000, pc_enable: 1
+time:                    1, clk: 1, pc_controller: 00000000, pc_enable: 1
+time:                    1, clk: 1, pc_controller: 00000000, pc_enable: 1
+time:                    2, clk: 0, pc_controller: 00000000, pc_enable: 1
+time:                    3, clk: 1, pc_controller: 00000004, pc_enable: 1
+time:                    4, clk: 0, pc_controller: 00000004, pc_enable: 1
+time:                    5, clk: 1, pc_controller: 00000008, pc_enable: 1
+time:                    6, clk: 0, pc_controller: 00000008, pc_enable: 1
+time:                    7, clk: 1, pc_controller: 0000000c, pc_enable: 1
+time:                    8, clk: 0, pc_controller: 0000000c, pc_enable: 1
+time:                    9, clk: 1, pc_controller: 00000010, pc_enable: 1
+time:                   10, clk: 0, pc_controller: 00000010, pc_enable: 1
+time:                   11, clk: 1, pc_controller: 00000014, pc_enable: 0
+time:                   12, clk: 0, pc_controller: 00000014, pc_enable: 0
+time:                   13, clk: 1, pc_controller: 00000014, pc_enable: 0
+time:                   14, clk: 0, pc_controller: 00000014, pc_enable: 0
+time:                   15, clk: 1, pc_controller: 00000014, pc_enable: 0
+time:                   16, clk: 0, pc_controller: 00000014, pc_enable: 0
+time:                   17, clk: 1, pc_controller: 00000014, pc_enable: 0
+time:                   18, clk: 0, pc_controller: 00000014, pc_enable: 0
+time:                   19, clk: 1, pc_controller: 00000014, pc_enable: 1
+time:                   20, clk: 0, pc_controller: 00000014, pc_enable: 1
+time:                   21, clk: 1, pc_controller: 00000018, pc_enable: 1
+time:                   22, clk: 0, pc_controller: 00000018, pc_enable: 1
+time:                   23, clk: 1, pc_controller: 0000001c, pc_enable: 0
+time:                   24, clk: 0, pc_controller: 0000001c, pc_enable: 0
+time:                   25, clk: 1, pc_controller: 0000001c, pc_enable: 0
+time:                   26, clk: 0, pc_controller: 0000001c, pc_enable: 0
+time:                   27, clk: 1, pc_controller: 0000001c, pc_enable: 0
+time:                   28, clk: 0, pc_controller: 0000001c, pc_enable: 0
+time:                   29, clk: 1, pc_controller: 0000001c, pc_enable: 0
+time:                   30, clk: 0, pc_controller: 0000001c, pc_enable: 0
+time:                   31, clk: 1, pc_controller: 0000001c, pc_enable: 1
+time:                   32, clk: 0, pc_controller: 0000001c, pc_enable: 1
+time:                   33, clk: 1, pc_controller: 00000020, pc_enable: 1
+time:                   34, clk: 0, pc_controller: 00000020, pc_enable: 1
+time:                   35, clk: 1, pc_controller: 00000024, pc_enable: 0
+time:                   36, clk: 0, pc_controller: 00000024, pc_enable: 0
+time:                   37, clk: 1, pc_controller: 00000024, pc_enable: 0
+time:                   38, clk: 0, pc_controller: 00000024, pc_enable: 0
+time:                   39, clk: 1, pc_controller: 00000024, pc_enable: 0
+time:                   40, clk: 0, pc_controller: 00000024, pc_enable: 0
+time:                   41, clk: 1, pc_controller: 00000024, pc_enable: 0
+time:                   42, clk: 0, pc_controller: 00000024, pc_enable: 0
+time:                   43, clk: 1, pc_controller: 00000024, pc_enable: 1
+time:                   44, clk: 0, pc_controller: 00000024, pc_enable: 1
+time:                   45, clk: 1, pc_controller: 00000028, pc_enable: 1
+time:                   46, clk: 0, pc_controller: 00000028, pc_enable: 1
+time:                   47, clk: 1, pc_controller: 0000002c, pc_enable: 0
+time:                   48, clk: 0, pc_controller: 0000002c, pc_enable: 0
+time:                   49, clk: 1, pc_controller: 0000002c, pc_enable: 0
+time:                   50, clk: 0, pc_controller: 0000002c, pc_enable: 0
+time:                   51, clk: 1, pc_controller: 0000002c, pc_enable: 0
+time:                   52, clk: 0, pc_controller: 0000002c, pc_enable: 0
+time:                   53, clk: 1, pc_controller: 0000002c, pc_enable: 0
+time:                   54, clk: 0, pc_controller: 0000002c, pc_enable: 0
+time:                   55, clk: 1, pc_controller: 0000002c, pc_enable: 1
+time:                   56, clk: 0, pc_controller: 0000002c, pc_enable: 1
+time:                   57, clk: 1, pc_controller: 00000030, pc_enable: 1
+time:                   58, clk: 0, pc_controller: 00000030, pc_enable: 1
+time:                   59, clk: 1, pc_controller: 00000034, pc_enable: 1
+time:                   60, clk: 0, pc_controller: 00000034, pc_enable: 1
+time:                   61, clk: 1, pc_controller: 00000038, pc_enable: 0
+time:                   62, clk: 0, pc_controller: 00000038, pc_enable: 0
+time:                   63, clk: 1, pc_controller: 00000038, pc_enable: 0
+time:                   64, clk: 0, pc_controller: 00000038, pc_enable: 0
+time:                   65, clk: 1, pc_controller: 00000038, pc_enable: 0
+time:                   66, clk: 0, pc_controller: 00000038, pc_enable: 0
+time:                   67, clk: 1, pc_controller: 00000038, pc_enable: 0
+time:                   68, clk: 0, pc_controller: 00000038, pc_enable: 0
+time:                   69, clk: 1, pc_controller: 00000038, pc_enable: 1
+time:                   70, clk: 0, pc_controller: 00000038, pc_enable: 1
+time:                   71, clk: 1, pc_controller: 0000003c, pc_enable: 1
+time:                   72, clk: 0, pc_controller: 0000003c, pc_enable: 1
+time:                   73, clk: 1, pc_controller: 00000040, pc_enable: 0
+time:                   74, clk: 0, pc_controller: 00000040, pc_enable: 0
+time:                   75, clk: 1, pc_controller: 00000040, pc_enable: 0
+time:                   76, clk: 0, pc_controller: 00000040, pc_enable: 0
+time:                   77, clk: 1, pc_controller: 00000040, pc_enable: 0
+time:                   78, clk: 0, pc_controller: 00000040, pc_enable: 0
+time:                   79, clk: 1, pc_controller: 00000040, pc_enable: 0
+time:                   80, clk: 0, pc_controller: 00000040, pc_enable: 0
+time:                   81, clk: 1, pc_controller: 00000040, pc_enable: 1
+time:                   82, clk: 0, pc_controller: 00000040, pc_enable: 1
+time:                   83, clk: 1, pc_controller: 00000044, pc_enable: 1
+time:                   84, clk: 0, pc_controller: 00000044, pc_enable: 1
+time:                   85, clk: 1, pc_controller: 00000048, pc_enable: 0
+time:                   86, clk: 0, pc_controller: 00000048, pc_enable: 0
+time:                   87, clk: 1, pc_controller: 00000048, pc_enable: 0
+time:                   88, clk: 0, pc_controller: 00000048, pc_enable: 0
+time:                   89, clk: 1, pc_controller: 00000048, pc_enable: 0
+time:                   90, clk: 0, pc_controller: 00000048, pc_enable: 0
+time:                   91, clk: 1, pc_controller: 00000048, pc_enable: 0
+time:                   92, clk: 0, pc_controller: 00000048, pc_enable: 0
+time:                   93, clk: 1, pc_controller: 00000048, pc_enable: 1
+time:                   94, clk: 0, pc_controller: 00000048, pc_enable: 1
+time:                   95, clk: 1, pc_controller: 0000004c, pc_enable: 1
+time:                   96, clk: 0, pc_controller: 0000004c, pc_enable: 1
+time:                   97, clk: 1, pc_controller: 00000050, pc_enable: 0
+time:                   98, clk: 0, pc_controller: 00000050, pc_enable: 0
+time:                   99, clk: 1, pc_controller: 00000050, pc_enable: 0
+time:                  100, clk: 0, pc_controller: 00000050, pc_enable: 0
+time:                  101, clk: 1, pc_controller: 00000050, pc_enable: 0
+time:                  102, clk: 0, pc_controller: 00000050, pc_enable: 0
+time:                  103, clk: 1, pc_controller: 00000050, pc_enable: 0
+time:                  104, clk: 0, pc_controller: 00000050, pc_enable: 0
+time:                  105, clk: 1, pc_controller: 00000050, pc_enable: 1
+time:                  106, clk: 0, pc_controller: 00000050, pc_enable: 1
+time:                  107, clk: 1, pc_controller: 00000054, pc_enable: 1
+time:                  108, clk: 0, pc_controller: 00000054, pc_enable: 1
+time:                  109, clk: 1, pc_controller: 00000058, pc_enable: 1
+time:                  110, clk: 0, pc_controller: 00000058, pc_enable: 1
+time:                  111, clk: 1, pc_controller: 0000005c, pc_enable: 1
+time:                  112, clk: 0, pc_controller: 0000005c, pc_enable: 1
+time:                  113, clk: 1, pc_controller: 00000060, pc_enable: 1
+time:                  114, clk: 0, pc_controller: 00000060, pc_enable: 1
+time:                  115, clk: 1, pc_controller: 00000064, pc_enable: 1
+time:                  116, clk: 0, pc_controller: 00000064, pc_enable: 1
+time:                  117, clk: 1, pc_controller: 00000068, pc_enable: 1
+time:                  118, clk: 0, pc_controller: 00000068, pc_enable: 1
+time:                  119, clk: 1, pc_controller: 0000006c, pc_enable: 1
+time:                  120, clk: 0, pc_controller: 0000006c, pc_enable: 1
+time:                  121, clk: 1, pc_controller: 00000070, pc_enable: 1
+time:                  122, clk: 0, pc_controller: 00000070, pc_enable: 1
+time:                  123, clk: 1, pc_controller: 00000074, pc_enable: 1
+time:                  124, clk: 0, pc_controller: 00000074, pc_enable: 1
+time:                  125, clk: 1, pc_controller: 00000078, pc_enable: 1
+time:                  126, clk: 0, pc_controller: 00000078, pc_enable: 1
+- 323src/mips_machine.sv:87: Verilog $finish
+=== Simulation Cycle 63 ===
+*** RegisterFile dump ***
+r 0 = 0x00000000
+r 1 = 0x00000000
+r 2 = 0x0000000a
+r 3 = 0x10000004
+r 4 = 0x00000000
+r 5 = 0x000000ff
+r 6 = 0x000001fe
+r 7 = 0x000003fc
+r 8 = 0x0000792c
+r 9 = 0x000000ff
+r10 = 0x000003fc
+r11 = 0x000003fc
+r12 = 0x000003fc
+r13 = 0x0000792c
+r14 = 0x000003fc
+r15 = 0x000000ff
+r16 = 0x000000ff
+r17 = 0x00008c19
+r18 = 0x00000000
+r19 = 0x00000000
+r20 = 0x00000000
+r21 = 0x00000000
+r22 = 0x00000000
+r23 = 0x00000000
+r24 = 0x00000000
+r25 = 0x00000000
+r26 = 0x00000000
+r27 = 0x00000000
+r28 = 0x00000000
+r29 = 0x00000000
+r30 = 0x00000000
+r31 = 0x00000000
+time:                  127, clk: 1, pc_controller: 0000007c, pc_enable: 1
+diff -u test/default/memtest0.reg output/regdump.reg 1>&2

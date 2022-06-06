@@ -78,6 +78,31 @@ module mips_machine(
         .rst_b(rst_b)
     );
 
+    initial $monitor("time: %d, inst_addr: %d, mem_w: %b, state: %b, memory 10010100: %h, mem_we_d4: %b, mem_data_in: %h, mem_addr: %h",
+    $time,
+    inst_addr,
+    mem_write_en,
+    core.controller.opcode,
+    {
+        data_memory.mem[(32'h10020100) + 3],
+        data_memory.mem[(32'h10020100) + 2],
+        data_memory.mem[(32'h10020100) + 1],
+        data_memory.mem[(32'h10020100) + 0]
+    },
+    mem_we_d4,
+    {mem_data_in[3], mem_data_in[2], mem_data_in[1], mem_data_in[0]},
+    mem_addr
+    );
+
+    // initial $monitor("inst_addr: %d, mem_w: %b, memory 10000000: %h", inst_addr, mem_we_d4,
+    // {
+    //     data_memory.mem[(32'h10000000) + 3],
+    //     data_memory.mem[(32'h10000000) + 2],
+    //     data_memory.mem[(32'h10000000) + 1],
+    //     data_memory.mem[(32'h10000000) + 0]
+    // }
+    // );
+
     defparam instruction_memory.top=4096;
     defparam instruction_memory.has_default=1;
     defparam instruction_memory.default_file="output/instructions.mem";
