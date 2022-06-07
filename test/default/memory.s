@@ -2,10 +2,10 @@
 	.text
 main:
         #;;  Set a base address
-        lui $t0, 0x1001
-        ori $t0 ,0x0100
-        lui $t1, 0x1002
-        ori $t1 ,0x0100
+        lui $t0, 0x1000
+        ori $t0 ,0xE100
+        lui $t1, 0x1000
+        ori $t1 ,0x6100
 
 
         addiu  $t2, $zero, 255
