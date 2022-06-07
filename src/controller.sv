@@ -11,10 +11,16 @@ module Controller(
     is_unsigned,
     pc_enable,
     opcode,
+    cache_input_type, // 0 for memory, 1 for ALU
+    we_cache,
+    cache_hit,
+    cache_dirty,
     func,
     clk
 );
 
+    input wire cache_hit;
+    input wire cache_dirty;
     input wire [5:0] opcode;
     input wire [5:0] func;
     input wire clk;
@@ -30,17 +36,23 @@ module Controller(
     output reg register_write;
     output reg is_unsigned;
     output reg pc_enable;
+    output reg we_cache;
 
     reg [3:0] p_state = S0;
     reg [3:0] n_state;
 
-    parameter S0 = 4'b0000;
-    parameter S1 = 4'b0001;
-    parameter S2 = 4'b0010;
-    parameter S3 = 4'b0011;
-    parameter S4 = 4'b0100;
-    parameter S5 = 4'b0101;
-    parameter S6 = 4'b0110;
+    parameter S0    = 4'b0000;
+    parameter S1    = 4'b0001;
+    parameter S2    = 4'b0010;
+    parameter S3    = 4'b0011;
+    parameter S4    = 4'b0100;
+    parameter S5    = 4'b0101;
+    parameter S7    = 4'b0110;
+    parameter S8    = 4'b0110;
+    parameter S9    = 4'b0110;
+    parameter S10   = 4'b0110;
+    parameter S11   = 4'b0110;
+    parameter S12   = 4'b0110;
 
     //R type
     parameter Rtype_code = 6'b000000;
@@ -372,29 +384,46 @@ module Controller(
 
     always_latch @(p_state or opcode)
     begin
+        we_memory = 1'b0;
+        we_cache = 1'b0;
+
         case (p_state)
             S0: begin
                 if (opcode == LW_code) begin
-                    n_state = S1;
-                    pc_enable = 1'b0;
+                    if (cache_hit) begin
+                        n_state = S0;
+                        pc_enable = 1'b1;
+                    end
+                    else begin
+                        pc_enable = 1'b0;
+                        if (cache_dirty) begin
+                            we_memory = 1'b1;
+                            n_state = S6;
+                        end
+                        else begin
+                            n_state = S1;
+                        end
+                    end
                 end
                 else if (opcode == SW_code) begin
-                    n_state = S1;
-                    pc_enable = 1'b0;
-                    we_memory = 1'b1;
+                    if (cache_dirty & ~cache_hit) begin
+                        n_state = S1;
+                        we_memory = 1'b1;
+                        pc_enable = 1'b0;
+                    end
+                    else begin
+                        n_state = S0;
+                        we_cache = 1'b1;
+                        pc_enable = 1'b1;
+                    end
                 end
                 else begin
                     n_state = S0;
                     pc_enable = 1'b1;
                 end
-                    // if (cache_hit) begin
-                    //     pc_enable = 1'b1;
-                    //     n_state = S0;
-                    // end
             end
 
             S1: begin
-                we_memory = 1'b0;
                 n_state = S2;
             end
 
@@ -408,18 +437,44 @@ module Controller(
 
             S4: begin
                 if (opcode == LW_code) begin
-                    register_write = 1'b1;
-                    pc_enable = 1'b1;
-                    n_state = S0;
+                    we_cache = 1'b1;
+                    cache_input_type = 1'b0;
+                    set_valid = 1'b1;
+                    set_dirty = 1'b0;
+                    n_state = S5;
                 end
                 else if (opcode == SW_code) begin
+                    we_cache = 1'b1;
                     n_state = S0;
                     pc_enable = 1'b1;
                 end
             end
 
-            default: n_state = S0;
+            S5: begin
+                if (opcode == LW_code) begin
+                    register_write = 1'b1;
+                    pc_enable = 1'b1;
+                    n_state = S0;
+                end
+            end
 
+            S6: begin
+                n_state = S7;
+            end
+
+            S7: begin
+                n_state = S8;
+            end
+
+            S8: begin
+                n_state = S9;
+            end
+
+            S9: begin
+                n_state = S1;
+            end
+
+            default: n_state = S0;
         endcase
     end
 endmodule

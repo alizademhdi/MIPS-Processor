@@ -5,6 +5,8 @@ module Cache (
     we_cache,
     cache_addr,
     data_in,
+    set_valid,
+    set_dirty,
     clk
 );
     output wire cache_hit;
@@ -58,9 +60,5 @@ module Cache (
         else
             dirty_array[cache_addr[5:0]] <= 1'b0;
     end
-
-
-
-
 
 endmodule
