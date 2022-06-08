@@ -17,9 +17,9 @@ module mips_core(
     input          clk;
     input          rst_b;
 
-    output  [31:0] inst_addr;
-    output  [31:0] mem_addr;
-    output  [7:0]  mem_data_in[0:3];
+    output      [31:0] inst_addr;
+    output reg  [31:0] mem_addr;
+    output      [7:0]  mem_data_in[0:3];
     output         mem_write_en;
     output reg     halted;
 
@@ -27,7 +27,6 @@ module mips_core(
     assign mem_data_in[1] = cache_data_out[1];
     assign mem_data_in[2] = cache_data_out[2];
     assign mem_data_in[3] = cache_data_out[3];
-    assign mem_addr = ALU_result;
 
 
     // halted
@@ -57,6 +56,7 @@ module mips_core(
     wire cache_input_type;
     wire set_dirty;
     wire set_valid;
+    wire memory_address_type;
 
     Controller controller(
         .destination_register(destination_register),
@@ -73,6 +73,7 @@ module mips_core(
         .opcode(inst[31:26]),
         .we_cache(we_cache),
         .cache_input_type(cache_input_type),
+        .memory_address_type(memory_address_type),
         .cache_hit(cache_hit),
         .cache_dirty(cache_dirty),
         .set_dirty(set_dirty),
@@ -81,11 +82,22 @@ module mips_core(
         .clk(clk)
     );
 
+    always @(memory_address_type)
+    begin
+        if (memory_address_type) begin
+            mem_addr = memory_write_address;
+        end
+        else begin
+            mem_addr = ALU_result;
+        end
+    end
+
 
     // Create cache
 
     wire cache_hit;
     wire cache_dirty;
+    wire [31:0] memory_write_address;
     wire [7:0] cache_data_out [0:3];
     reg [31:0] cache_data_in;
 
@@ -93,6 +105,7 @@ module mips_core(
         .cache_hit(cache_hit),
         .cache_dirty(cache_dirty),
         .data_out(cache_data_out),
+        .memory_write_address(memory_write_address),
         .we_cache(we_cache),
         .cache_addr(ALU_result),
         .data_in(cache_data_in),
@@ -210,6 +223,20 @@ module mips_core(
         .clk(clk)
     );
 
-    initial $monitor("inst_addr: %d, cache out: %h, cache in:%h, hit:%d", inst_addr, {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]}, cache_data_in, cache_hit);
+    initial $monitor("inst_addr: %d, cache out: %h, cache in:%h, hit:%d, cache_input_type: %b, mem_addr: %h, mem_data_out: %h, cache_addr: %h",
+    inst_addr,
+    {
+        cache_data_out[3],
+        cache_data_out[2],
+        cache_data_out[1],
+        cache_data_out[0]
+    },
+    cache_data_in,
+    cache_hit,
+    cache_input_type,
+    mem_addr,
+    {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]},
+    ALU_result
+    );
 
 endmodule

@@ -78,21 +78,21 @@ module mips_machine(
         .rst_b(rst_b)
     );
 
-    initial $monitor("time: %d, inst_addr: %d, mem_w: %b, state: %b, memory 10010100: %h, mem_we_d4: %b, mem_data_in: %h, mem_addr: %h",
-    $time,
-    inst_addr,
-    mem_write_en,
-    core.controller.opcode,
-    {
-        data_memory.mem[(32'h10020100) + 3],
-        data_memory.mem[(32'h10020100) + 2],
-        data_memory.mem[(32'h10020100) + 1],
-        data_memory.mem[(32'h10020100) + 0]
-    },
-    mem_we_d4,
-    {mem_data_in[3], mem_data_in[2], mem_data_in[1], mem_data_in[0]},
-    mem_addr
-    );
+    // initial $monitor("time: %d, inst_addr: %d, mem_w: %b, state: %b, memory 1000e100: %h, mem_we_d4: %b, mem_data_in: %h, mem_addr: %h",
+    // $time,
+    // inst_addr,
+    // mem_write_en,
+    // core.controller.opcode,
+    // {
+    //     data_memory.mem[(32'h1000e100) + 3],
+    //     data_memory.mem[(32'h1000e100) + 2],
+    //     data_memory.mem[(32'h1000e100) + 1],
+    //     data_memory.mem[(32'h1000e100) + 0]
+    // },
+    // mem_we_d4,
+    // {mem_data_in[3], mem_data_in[2], mem_data_in[1], mem_data_in[0]},
+    // mem_addr
+    // );
 
     // initial $monitor("inst_addr: %d, mem_w: %b, memory 10000000: %h", inst_addr, mem_we_d4,
     // {

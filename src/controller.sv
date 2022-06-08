@@ -14,6 +14,7 @@ module Controller(
     set_dirty,
     opcode,
     cache_input_type, // 0 for memory, 1 for else
+    memory_address_type, // 0 for alu, 1 for cache
     we_cache,
     cache_hit,
     cache_dirty,
@@ -41,6 +42,7 @@ module Controller(
     output reg we_cache;
     output reg set_valid = 0;
     output reg cache_input_type = 0;
+    output reg memory_address_type = 0;
     output reg set_dirty = 0;
 
 
@@ -59,6 +61,7 @@ module Controller(
     parameter S9    = 4'b1001;
     parameter S10   = 4'b1010;
     parameter S11   = 4'b1011;
+    parameter S12   = 4'b1100;
 
     //R type
     parameter Rtype_code = 6'b000000;
@@ -392,9 +395,11 @@ module Controller(
     begin
         we_memory = 1'b0;
         we_cache = 1'b0;
+        cache_input_type = 1'b1;
 
         case (p_state)
             S0: begin
+                // start of lw
                 if (opcode == LW_code) begin
                     if (cache_hit) begin
                         n_state = S0;
@@ -406,18 +411,20 @@ module Controller(
                         if (cache_dirty) begin
                             we_memory = 1'b1;
                             n_state = S6;
+                            memory_address_type = 1'b1;
                         end
                         else begin
                             n_state = S1;
                         end
                     end
                 end
+                // start of sw
                 else if (opcode == SW_code) begin
                     if (cache_dirty & ~cache_hit) begin
                         n_state = S1;
                         we_memory = 1'b1;
                         pc_enable = 1'b0;
-
+                        memory_address_type = 1'b1;
                     end
                     else begin
                         we_cache = 1'b1;
@@ -436,6 +443,12 @@ module Controller(
 
             S1: begin
                 n_state = S2;
+                if (opcode == LW_code) begin
+                    memory_address_type = 1'b0;
+                end
+                else if (opcode == SW_code) begin
+                    cache_input_type = 1'b0;
+                end
             end
 
             S2: begin
@@ -443,7 +456,7 @@ module Controller(
             end
 
             S3: begin
-                n_state = S4;
+                n_state = S10;
             end
 
             S4: begin
@@ -453,6 +466,7 @@ module Controller(
                     set_valid = 1'b1;
                     set_dirty = 1'b0;
                     pc_enable = 1'b1;
+                    register_write = 1'b1;
                     n_state = S0;
                 end
                 else if (opcode == SW_code) begin
@@ -486,6 +500,18 @@ module Controller(
 
             S9: begin
                 n_state = S1;
+            end
+
+            S10: begin
+                n_state = S11;
+            end
+
+            S11: begin
+                n_state = S4;
+            end
+
+            S12: begin
+                n_state = S4;
             end
 
             default: n_state = S0;
