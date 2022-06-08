@@ -23,7 +23,7 @@ main:
 
 
         #;; Calculate a "checksum" for easy comparison
-        add    $s0, $t7, $24 # 56
+        add    $s0, $15, $24 # 56
 
         #;;  Quit out
         addiu $v0, $zero, 0xa

@@ -70,15 +70,16 @@ module Cache (
 
     integer j;
 
-    always @(*) begin
-        for (j = 0; j < size; j = j + 1) begin
-            $display("tag: %b, valid: %b, dirty: %b, word: %h",
-                tag_array[j],
-                valid_array[j],
-                dirty_array[j],
-                cache[j]
-            );
-        end
-    end
+    // always @(*) begin
+    //     $display("time: %d", $time);
+    //     for (j = 0; j < size; j = j + 1) begin
+    //         $display("tag: %b, valid: %b, dirty: %b, word: %h",
+    //             tag_array[j],
+    //             valid_array[j],
+    //             dirty_array[j],
+    //             cache[j]
+    //         );
+    //     end
+    // end
 
 endmodule
