@@ -33,7 +33,7 @@ module Cache (
 		for (i = 0; i < size; i = i + 1)
 		begin
 			valid_array[i] = 1'b0;
-			tag_array[i] = 9'b000000;
+			tag_array[i] = 10'b0000000000;
 		end
 	end
 
@@ -42,8 +42,8 @@ module Cache (
 
     assign data_out[0] = cache[cache_addr[5:0]][7:0];
     assign data_out[1] = cache[cache_addr[5:0]][15:8];
-    assign data_out[2] = cache[cache_addr[5:0]][24:16];
-    assign data_out[3] = chahe[cache_addr[5:0]][31:25];
+    assign data_out[2] = cache[cache_addr[5:0]][23:16];
+    assign data_out[3] = cache[cache_addr[5:0]][31:24];
 
     always @(posedge clk)
     begin

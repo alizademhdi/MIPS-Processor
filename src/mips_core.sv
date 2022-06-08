@@ -23,10 +23,10 @@ module mips_core(
     output         mem_write_en;
     output reg     halted;
 
-    assign mem_data_in[0] = rt_data[7:0];
-    assign mem_data_in[1] = rt_data[15:8];
-    assign mem_data_in[2] = rt_data[23:16];
-    assign mem_data_in[3] = rt_data[31:24];
+    assign mem_data_in[0] = cache_data_out[0];
+    assign mem_data_in[1] = cache_data_out[1];
+    assign mem_data_in[2] = cache_data_out[2];
+    assign mem_data_in[3] = cache_data_out[3];
     assign mem_addr = ALU_result;
 
 
@@ -53,6 +53,10 @@ module mips_core(
     wire register_write;
     wire is_unsigned;
     wire pc_enable;
+    wire we_cache;
+    wire cache_input_type;
+    wire set_dirty;
+    wire set_valid;
 
     Controller controller(
         .destination_register(destination_register),
@@ -67,9 +71,44 @@ module mips_core(
         .is_unsigned(is_unsigned),
         .pc_enable(pc_enable),
         .opcode(inst[31:26]),
+        .we_cache(we_cache),
+        .cache_input_type(cache_input_type),
+        .cache_hit(cache_hit),
+        .cache_dirty(cache_dirty),
+        .set_dirty(set_dirty),
+        .set_valid(set_valid),
         .func(inst[5:0]),
         .clk(clk)
     );
+
+
+    // Create cache
+
+    wire cache_hit;
+    wire cache_dirty;
+    wire [7:0] cache_data_out [0:3];
+    reg [31:0] cache_data_in;
+
+    Cache cache(
+        .cache_hit(cache_hit),
+        .cache_dirty(cache_dirty),
+        .data_out(cache_data_out),
+        .we_cache(we_cache),
+        .cache_addr(ALU_result),
+        .data_in(cache_data_in),
+        .set_valid(set_valid),
+        .set_dirty(set_dirty),
+        .clk(clk)
+    );
+
+    always @(cache_input_type)
+    begin
+        if(cache_input_type == 1'b0)
+            cache_data_in = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+        else
+            cache_data_in = rt_data;
+
+    end
 
 
     // Create register file
@@ -97,7 +136,7 @@ module mips_core(
 
         case (register_src)
             2'b00: rd_data = ALU_result;
-            2'b01: rd_data = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+            2'b01: rd_data = {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]};
             2'b10: rd_data = inst_addr + 4;
             default:
                 rd_data = ALU_result;

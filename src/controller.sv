@@ -10,8 +10,10 @@ module Controller(
     register_write,
     is_unsigned,
     pc_enable,
+    set_valid,
+    set_dirty,
     opcode,
-    cache_input_type, // 0 for memory, 1 for ALU
+    cache_input_type, // 0 for memory, 1 for else
     we_cache,
     cache_hit,
     cache_dirty,
@@ -37,6 +39,10 @@ module Controller(
     output reg is_unsigned;
     output reg pc_enable;
     output reg we_cache;
+    output reg set_valid = 0;
+    output reg cache_input_type = 0;
+    output reg set_dirty = 0;
+
 
     reg [3:0] p_state = S0;
     reg [3:0] n_state;
@@ -47,12 +53,12 @@ module Controller(
     parameter S3    = 4'b0011;
     parameter S4    = 4'b0100;
     parameter S5    = 4'b0101;
-    parameter S7    = 4'b0110;
-    parameter S8    = 4'b0110;
-    parameter S9    = 4'b0110;
-    parameter S10   = 4'b0110;
-    parameter S11   = 4'b0110;
-    parameter S12   = 4'b0110;
+    parameter S6    = 4'b0110;
+    parameter S7    = 4'b0111;
+    parameter S8    = 4'b1000;
+    parameter S9    = 4'b1001;
+    parameter S10   = 4'b1010;
+    parameter S11   = 4'b1011;
 
     //R type
     parameter Rtype_code = 6'b000000;
