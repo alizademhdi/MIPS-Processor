@@ -392,14 +392,13 @@ module Controller(
     begin
         we_memory = 1'b0;
         we_cache = 1'b0;
-        set_dirty = 1'b0;
-        set_valid = 1'b0;
 
         case (p_state)
             S0: begin
                 if (opcode == LW_code) begin
                     if (cache_hit) begin
                         n_state = S0;
+                        register_write = 1'b1;
                         pc_enable = 1'b1;
                     end
                     else begin
@@ -418,11 +417,14 @@ module Controller(
                         n_state = S1;
                         we_memory = 1'b1;
                         pc_enable = 1'b0;
+
                     end
                     else begin
                         we_cache = 1'b1;
                         pc_enable = 1'b1;
                         cache_input_type = 1'b1;
+                        set_dirty = 1'b1;
+                        set_valid = 1'b1;
                         n_state = S0;
                     end
                 end
@@ -450,11 +452,14 @@ module Controller(
                     cache_input_type = 1'b0;
                     set_valid = 1'b1;
                     set_dirty = 1'b0;
+                    pc_enable = 1'b1;
                     n_state = S0;
                 end
                 else if (opcode == SW_code) begin
                     we_cache = 1'b1;
                     n_state = S0;
+                    set_valid = 1'b1;
+                    set_dirty = 1'b1;
                     pc_enable = 1'b1;
                 end
             end

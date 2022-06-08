@@ -210,6 +210,6 @@ module mips_core(
         .clk(clk)
     );
 
-    initial $monitor("inst_addr: %d, cache out: %h, cache in:%h", inst_addr, {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]}, cache_data_in);
+    initial $monitor("inst_addr: %d, cache out: %h, cache in:%h, hit:%d", inst_addr, {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]}, cache_data_in, cache_hit);
 
 endmodule
