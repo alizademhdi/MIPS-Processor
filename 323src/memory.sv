@@ -49,4 +49,11 @@ module memory(
             end
         end
     end
+
+    // always @(posedge clk) $display("%h", {
+    //     mem[(32'h10020100 & 32'hfffffffc) + 3],
+    //     mem[(32'h10020100 & 32'hfffffffc) + 2],
+    //     mem[(32'h10020100 & 32'hfffffffc) + 1],
+    //     mem[(32'h10020100 & 32'hfffffffc) + 0]
+    // });
 endmodule

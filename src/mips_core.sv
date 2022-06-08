@@ -17,17 +17,16 @@ module mips_core(
     input          clk;
     input          rst_b;
 
-    output  [31:0] inst_addr;
-    output  [31:0] mem_addr;
-    output  [7:0]  mem_data_in[0:3];
+    output      [31:0] inst_addr;
+    output reg  [31:0] mem_addr;
+    output      [7:0]  mem_data_in[0:3];
     output         mem_write_en;
     output reg     halted;
 
-    assign mem_data_in[0] = rt_data[7:0];
-    assign mem_data_in[1] = rt_data[15:8];
-    assign mem_data_in[2] = rt_data[23:16];
-    assign mem_data_in[3] = rt_data[31:24];
-    assign mem_addr = ALU_result;
+    assign mem_data_in[0] = cache_data_out[0];
+    assign mem_data_in[1] = cache_data_out[1];
+    assign mem_data_in[2] = cache_data_out[2];
+    assign mem_data_in[3] = cache_data_out[3];
 
 
     // halted
@@ -52,6 +51,12 @@ module mips_core(
     wire ALU_src;
     wire register_write;
     wire is_unsigned;
+    wire pc_enable;
+    wire we_cache;
+    wire cache_input_type;
+    wire set_dirty;
+    wire set_valid;
+    wire memory_address_type;
 
     Controller controller(
         .destination_register(destination_register),
@@ -64,9 +69,65 @@ module mips_core(
         .ALU_src(ALU_src),
         .register_write(register_write),
         .is_unsigned(is_unsigned),
+        .pc_enable(pc_enable),
         .opcode(inst[31:26]),
-        .func(inst[5:0])
+        .we_cache(we_cache),
+        .cache_input_type(cache_input_type),
+        .memory_address_type(memory_address_type),
+        .cache_hit(cache_hit),
+        .cache_dirty(cache_dirty),
+        .set_dirty(set_dirty),
+        .set_valid(set_valid),
+        .is_word(is_word),
+        .func(inst[5:0]),
+        .clk(clk)
     );
+
+    always @(memory_address_type)
+    begin
+        if (memory_address_type) begin
+            mem_addr = memory_write_address;
+        end
+        else begin
+            mem_addr = ALU_result;
+        end
+    end
+
+
+    // Create cache
+
+    wire cache_hit;
+    wire cache_dirty;
+    wire [31:0] memory_write_address;
+    wire [7:0] cache_data_out [0:3];
+    reg [31:0] cache_data_in;
+    wire is_word;
+    wire [1:0] byte_number;
+
+    Cache cache(
+        .cache_hit(cache_hit),
+        .cache_dirty(cache_dirty),
+        .data_out(cache_data_out),
+        .memory_write_address(memory_write_address),
+        .byte_number(byte_number),
+        .we_cache(we_cache),
+        .cache_addr(ALU_result),
+        .data_in(cache_data_in),
+        .set_valid(set_valid),
+        .set_dirty(set_dirty),
+        .is_word(is_word),
+        .clk(clk)
+    );
+
+    always @(cache_input_type)
+    begin
+        if(cache_input_type == 1'b0)
+        begin
+            cache_data_in = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+        end
+        else
+            cache_data_in = rt_data;
+    end
 
 
     // Create register file
@@ -89,12 +150,26 @@ module mips_core(
         .halted(halted)
     );
 
-    always @(register_src)
+    always @(*)
     begin
 
         case (register_src)
             2'b00: rd_data = ALU_result;
-            2'b01: rd_data = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+            2'b01:
+            begin
+                if(is_word)
+                    rd_data = {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]};
+                else begin
+                    case (byte_number)
+                        2'b00: rd_data = {{24{cache_data_out[3][7]}}, cache_data_out[3]};
+                        2'b01: rd_data = {{24{cache_data_out[2][7]}}, cache_data_out[2]};
+                        2'b10: rd_data = {{24{cache_data_out[1][7]}}, cache_data_out[1]};
+                        2'b11: rd_data = {{24{cache_data_out[0][7]}}, cache_data_out[0]};
+                        default: rd_data = {{24{cache_data_out[0][7]}}, cache_data_out[0]};
+                    endcase
+                end
+
+            end
             2'b10: rd_data = inst_addr + 4;
             default:
                 rd_data = ALU_result;
@@ -162,8 +237,8 @@ module mips_core(
         .rs_data(rs_data),
         .imm_sign_extend(imm_extend),
         .zero(zero),
+        .pc_enable(pc_enable),
         .clk(clk)
     );
-
 
 endmodule

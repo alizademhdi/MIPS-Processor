@@ -75,7 +75,7 @@ module ALU(
             OR_OP: data_out = data_in1 | data_in2;
             NOR_OP: data_out = ~(data_in1 | data_in2);
             AND_OP: data_out = data_in1 & data_in2;
-            SLT_OP: data_out = ~is_data1_greater_than_data2;
+            SLT_OP: data_out = $signed(data_in1) < $signed(data_in2) ? 1 : 0;
             LUI_OP: data_out = {data_in2[15:0], 16'b0};
             BEQ_OP:
                 begin
