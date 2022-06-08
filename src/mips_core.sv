@@ -104,7 +104,9 @@ module mips_core(
     always @(cache_input_type)
     begin
         if(cache_input_type == 1'b0)
+        begin
             cache_data_in = {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]};
+        end
         else
             cache_data_in = rt_data;
 
@@ -208,6 +210,6 @@ module mips_core(
         .clk(clk)
     );
 
-    // initial $monitor("time: %d, inst_addr: %d, opcode: %b", $time, inst_addr, inst[31:26]);
+    initial $monitor("inst_addr: %d, cache out: %h, cache in:%h", inst_addr, {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]}, cache_data_in);
 
 endmodule

@@ -33,6 +33,7 @@ module Cache (
 		for (i = 0; i < size; i = i + 1)
 		begin
 			valid_array[i] = 1'b0;
+            dirty_array[i] = 1'b0;
 			tag_array[i] = 10'b0000000000;
 		end
 	end

@@ -392,6 +392,8 @@ module Controller(
     begin
         we_memory = 1'b0;
         we_cache = 1'b0;
+        set_dirty = 1'b0;
+        set_valid = 1'b0;
 
         case (p_state)
             S0: begin
@@ -418,9 +420,10 @@ module Controller(
                         pc_enable = 1'b0;
                     end
                     else begin
-                        n_state = S0;
                         we_cache = 1'b1;
                         pc_enable = 1'b1;
+                        cache_input_type = 1'b1;
+                        n_state = S0;
                     end
                 end
                 else begin
@@ -447,7 +450,7 @@ module Controller(
                     cache_input_type = 1'b0;
                     set_valid = 1'b1;
                     set_dirty = 1'b0;
-                    n_state = S5;
+                    n_state = S0;
                 end
                 else if (opcode == SW_code) begin
                     we_cache = 1'b1;
