@@ -78,6 +78,7 @@ module mips_core(
         .cache_dirty(cache_dirty),
         .set_dirty(set_dirty),
         .set_valid(set_valid),
+        .is_word(is_word),
         .func(inst[5:0]),
         .clk(clk)
     );
@@ -100,17 +101,21 @@ module mips_core(
     wire [31:0] memory_write_address;
     wire [7:0] cache_data_out [0:3];
     reg [31:0] cache_data_in;
+    wire is_word;
+    wire [1:0] byte_number;
 
     Cache cache(
         .cache_hit(cache_hit),
         .cache_dirty(cache_dirty),
         .data_out(cache_data_out),
         .memory_write_address(memory_write_address),
+        .byte_number(byte_number),
         .we_cache(we_cache),
         .cache_addr(ALU_result),
         .data_in(cache_data_in),
         .set_valid(set_valid),
         .set_dirty(set_dirty),
+        .is_word(is_word),
         .clk(clk)
     );
 
@@ -146,12 +151,26 @@ module mips_core(
         .halted(halted)
     );
 
-    always @(register_src)
+    always @(*)
     begin
 
         case (register_src)
             2'b00: rd_data = ALU_result;
-            2'b01: rd_data = {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]};
+            2'b01:
+            begin
+                if(is_word)
+                    rd_data = {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]};
+                else begin
+                    case (byte_number)
+                        2'b00: rd_data = {24'b0, cache_data_out[3]};
+                        2'b01: rd_data = {24'b0, cache_data_out[2]};
+                        2'b10: rd_data = {24'b0, cache_data_out[1]};
+                        2'b11: rd_data = {24'b0, cache_data_out[0]};
+                        default: rd_data = {24'b0, cache_data_out[0]};
+                    endcase
+                end
+
+            end
             2'b10: rd_data = inst_addr + 4;
             default:
                 rd_data = ALU_result;
@@ -221,29 +240,6 @@ module mips_core(
         .zero(zero),
         .pc_enable(pc_enable),
         .clk(clk)
-    );
-
-    always $display("time: %d, inst_addr: %d, cache out: %h == %h, cache in: %h, hit:%d, cache_input_type: %b, mem_addr: %h, mem_data_out: %h, cache_addr: %h",
-    $time,
-    inst_addr,
-    {
-        cache_data_out[3],
-        cache_data_out[2],
-        cache_data_out[1],
-        cache_data_out[0]
-    },
-    {
-        cache.data_out[3],
-        cache.data_out[2],
-        cache.data_out[1],
-        cache.data_out[0]
-    },
-    cache_data_in,
-    cache_hit,
-    cache_input_type,
-    mem_addr,
-    {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]},
-    ALU_result
     );
 
 endmodule

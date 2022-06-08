@@ -18,6 +18,7 @@ module Controller(
     we_cache,
     cache_hit,
     cache_dirty,
+    is_word,
     func,
     clk
 );
@@ -44,6 +45,7 @@ module Controller(
     output reg cache_input_type = 0;
     output reg memory_address_type = 0;
     output reg set_dirty = 0;
+    output reg is_word = 1;
 
 
     reg [3:0] p_state = S0;
@@ -98,6 +100,8 @@ module Controller(
     parameter BGEZ_code = 6'b000001;
     parameter LW_code = 6'b100011;
     parameter SW_code = 6'b101011;
+    parameter LB_code = 6'b100000;
+    parameter SB_code = 6'b101000;
     parameter SLTI_code = 6'b001010;
     parameter LUI_code = 6'b001111;
 
@@ -112,7 +116,8 @@ module Controller(
 
     always @(*)
     begin
-    case (opcode)
+        is_word = 1;
+        case (opcode)
             Rtype_code:
             begin
                 destination_register = 2'b01;
@@ -233,6 +238,22 @@ module Controller(
                 register_src = 2'b01;
                 register_write = 1'b0;
                 is_unsigned = 0;
+                is_word = 1;
+            end
+
+            LB_code:
+            begin
+                destination_register = 2'b00;
+                jump = 0;
+                branch = 0;
+                jump_register = 0;
+                we_memory = 0;
+                ALU_src = 1;
+                ALU_OP = 5'b00100;
+                register_src = 2'b01;
+                register_write = 1'b0;
+                is_unsigned = 0;
+                is_word = 0;
             end
 
             SW_code:
@@ -247,6 +268,22 @@ module Controller(
                 register_src = 2'b00;
                 register_write = 1'b0;
                 is_unsigned = 0;
+                is_word = 1;
+            end
+
+            SB_code:
+            begin
+                destination_register = 2'b00;
+                jump = 0;
+                branch = 0;
+                jump_register = 0;
+                we_memory = 0;
+                ALU_src = 1;
+                ALU_OP = 5'b00100;
+                register_src = 2'b00;
+                register_write = 1'b0;
+                is_unsigned = 0;
+                is_word = 0;
             end
 
             BEQ_code:
@@ -400,7 +437,7 @@ module Controller(
         case (p_state)
             S0: begin
                 // start of lw
-                if (opcode == LW_code) begin
+                if (opcode == LW_code || opcode == LB_code) begin
                     if (cache_hit) begin
                         n_state = S0;
                         register_write = 1'b1;
@@ -420,7 +457,7 @@ module Controller(
                     end
                 end
                 // start of sw
-                else if (opcode == SW_code) begin
+                else if (opcode == SW_code || opcode == SB_code) begin
                     if (cache_dirty & ~cache_hit) begin
                         n_state = S1;
                         we_memory = 1'b1;
@@ -444,10 +481,10 @@ module Controller(
 
             S1: begin
                 n_state = S2;
-                if (opcode == LW_code) begin
+                if (opcode == LW_code || opcode == LB_code) begin
                     memory_address_type = 1'b0;
                 end
-                else if (opcode == SW_code) begin
+                else if (opcode == SW_code || opcode == SB_code) begin
                     cache_input_type = 1'b0;
                 end
             end
@@ -461,14 +498,14 @@ module Controller(
             end
 
             S4: begin
-                if (opcode == LW_code) begin
+                if (opcode == LW_code || opcode == LB_code) begin
                     we_cache = 1'b1;
                     cache_input_type = 1'b0;
                     set_valid = 1'b1;
                     set_dirty = 1'b0;
                     n_state = S11;
                 end
-                else if (opcode == SW_code) begin
+                else if (opcode == SW_code || opcode == SB_code) begin
                     we_cache = 1'b1;
                     n_state = S0;
                     set_valid = 1'b1;
@@ -478,7 +515,7 @@ module Controller(
             end
 
             S5: begin
-                if (opcode == LW_code) begin
+                if (opcode == LW_code || opcode == LB_code) begin
                     register_write = 1'b1;
                     pc_enable = 1'b1;
                     n_state = S0;
