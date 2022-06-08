@@ -116,7 +116,6 @@ module Controller(
 
     always @(*)
     begin
-        is_word = 1;
         case (opcode)
             Rtype_code:
             begin
@@ -238,7 +237,6 @@ module Controller(
                 register_src = 2'b01;
                 register_write = 1'b0;
                 is_unsigned = 0;
-                is_word = 1;
             end
 
             LB_code:
@@ -253,7 +251,6 @@ module Controller(
                 register_src = 2'b01;
                 register_write = 1'b0;
                 is_unsigned = 0;
-                is_word = 0;
             end
 
             SW_code:
@@ -268,7 +265,6 @@ module Controller(
                 register_src = 2'b00;
                 register_write = 1'b0;
                 is_unsigned = 0;
-                is_word = 1;
             end
 
             SB_code:
@@ -283,7 +279,6 @@ module Controller(
                 register_src = 2'b00;
                 register_write = 1'b0;
                 is_unsigned = 0;
-                is_word = 0;
             end
 
             BEQ_code:
@@ -433,6 +428,7 @@ module Controller(
         we_memory = 1'b0;
         we_cache = 1'b0;
         cache_input_type = 1'b1;
+        is_word = (opcode == LW_code) || (opcode == SW_code);
 
         case (p_state)
             S0: begin
@@ -500,6 +496,7 @@ module Controller(
             S4: begin
                 if (opcode == LW_code || opcode == LB_code) begin
                     we_cache = 1'b1;
+                    is_word = 1'b1;
                     cache_input_type = 1'b0;
                     set_valid = 1'b1;
                     set_dirty = 1'b0;
@@ -551,4 +548,5 @@ module Controller(
             default: n_state = S0;
         endcase
     end
+    
 endmodule

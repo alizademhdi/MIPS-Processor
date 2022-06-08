@@ -127,7 +127,6 @@ module mips_core(
         end
         else
             cache_data_in = rt_data;
-
     end
 
 
@@ -162,11 +161,11 @@ module mips_core(
                     rd_data = {cache_data_out[3], cache_data_out[2], cache_data_out[1], cache_data_out[0]};
                 else begin
                     case (byte_number)
-                        2'b00: rd_data = {24'b0, cache_data_out[3]};
-                        2'b01: rd_data = {24'b0, cache_data_out[2]};
-                        2'b10: rd_data = {24'b0, cache_data_out[1]};
-                        2'b11: rd_data = {24'b0, cache_data_out[0]};
-                        default: rd_data = {24'b0, cache_data_out[0]};
+                        2'b00: rd_data = {{24{cache_data_out[3][7]}}, cache_data_out[3]};
+                        2'b01: rd_data = {{24{cache_data_out[2][7]}}, cache_data_out[2]};
+                        2'b10: rd_data = {{24{cache_data_out[1][7]}}, cache_data_out[1]};
+                        2'b11: rd_data = {{24{cache_data_out[0][7]}}, cache_data_out[0]};
+                        default: rd_data = {{24{cache_data_out[0][7]}}, cache_data_out[0]};
                     endcase
                 end
 
