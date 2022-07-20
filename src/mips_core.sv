@@ -1,4 +1,3 @@
-
 module mips_core(
     inst_addr,
     inst,
