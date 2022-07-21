@@ -16,7 +16,7 @@ module pc_controller_EX(
     output reg [31:0] baddr;
     output reg pc_src;
     
-    always_ff(@posedge clk) begin
+    always_ff @(posedge clk) begin
         pc_src = zero && branch;
         baddr = (imm_sign_extend << 2) + pc4;
     end

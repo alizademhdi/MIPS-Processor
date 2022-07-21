@@ -29,15 +29,13 @@ module pc_controller_IF(
     wire [31:0] jaddr;
     assign jaddr = {pc4[31:28], jea, 2'b00};
 
-    w
 
     always_ff @(posedge clk) begin
         if (pc_enable) begin
             if (jump == 1)
                 pc <= jaddr;
             else if (pc_src == 1)
-                pc <= baddr
-        ;
+                pc <= baddr;
             else if (jump_register == 1)
                 pc <= rs_data;
             else

@@ -56,14 +56,4 @@ module IF(
         .clk(clk)
     );
 
-    always @(posedge clk) begin 
-        if (-hold) begin
-            
-        end 
-    end
-
 endmodule
-
-    endmodule
-
-

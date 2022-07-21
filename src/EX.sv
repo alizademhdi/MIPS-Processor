@@ -130,7 +130,7 @@ module EX(
             data_in2 = rt_data;
     end
 
-    always @(inst_1511 || inst_2016)
+    always @(inst_1511, inst_2016)
         begin
 
             case (destination_register)
