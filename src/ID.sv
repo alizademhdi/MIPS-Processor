@@ -29,20 +29,31 @@ module ID(
     set_valid,
     memory_address_type,
     we_cache,
+    mem_write_en,
+    is_word,
+    cache_hit,
+    cache_dirty,
+    inst_addr_in,
+    inst_addr_out,
     clk,
     rst_b
 );
 
+    input [31:0] inst_addr_in;
     input [31:0] pc4_in;
     input [31:0] inst;
     input [31:0] rd_data;
     input [4:0] rd_num;
     input register_write_in;
+    input mem_write_en;
+    input cache_hit;
+    input cache_dirty;
     input halted;
     input clk;
     input rst_b;
     
 
+    output [31:0] inst_addr_out;
     output reg [31:0] rs_data;
     output reg [31:0] rt_data;
     output [31:0] pc4_out;
@@ -67,12 +78,14 @@ module ID(
     output reg set_dirty;
     output reg set_valid;
     output reg memory_address_type;
+    output reg is_word;
 
     assign pc4_out = pc4_in;
     assign inst_50 = inst[5:0];
     assign inst_2016 = inst[20:16];
     assign inst_1511 = inst[15:11];
     assign inst_106 = inst[10:6];
+    assign inst_addr_out = inst_addr_in;
 
     // Create register file
 
