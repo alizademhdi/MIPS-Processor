@@ -5,7 +5,7 @@ module pc_controller_IF(
     jump_register,
     rs_data,
     pc_src,
-    baddrs,
+    baddr,
     pc_enable,
     clk
 );
@@ -14,7 +14,7 @@ module pc_controller_IF(
     input wire jump_register;
     input wire [31:0] rs_data;
     input wire pc_src;
-    input wire [31:0] baddrs;
+    input wire [31:0] baddr;
     input wire pc_enable;
     input wire clk;
 
@@ -36,7 +36,8 @@ module pc_controller_IF(
             if (jump == 1)
                 pc <= jaddr;
             else if (pc_src == 1)
-                pc <= baddrs;
+                pc <= baddr
+        ;
             else if (jump_register == 1)
                 pc <= rs_data;
             else

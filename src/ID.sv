@@ -7,6 +7,7 @@ module ID(
     inst_50,
     inst_2016,
     inst_1511,
+    inst_106,
     rd_data,
     rd_num,
     destination_register,
@@ -48,11 +49,12 @@ module ID(
     output [6:0] inst_50;
     output [4:0] inst_2016;
     output [4:0] inst_1511;
+    output [4:0] inst_106;
     output reg [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
     output reg ALU_src;
     output reg [4:0] ALU_OP;
-    output reg mem_write;
-    output reg mem_read;
+    //output reg mem_write;
+    //output reg mem_read;
     output reg register_write_out;
     output reg [1:0] register_src;
     output reg jump;
@@ -70,6 +72,7 @@ module ID(
     assign inst_50 = inst[5:0];
     assign inst_2016 = inst[20:16];
     assign inst_1511 = inst[15:11];
+    assign inst_106 = inst[10:6];
 
     // Create register file
 

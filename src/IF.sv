@@ -12,21 +12,20 @@ module IF(
     clk
 );
 
-    input   [31:0] inst;
+    input [31:0] inst;
     input clk;
-    input wire pc_src;
-    input wire baddr;
-    input wire jump;
-    input wire jump_register;
-    input wire [31:0] rs_data;
-    input wire pc_enable;
+    input  pc_src;
+    input [31:0] baddr;
+    input jump;
+    input jump_register;
+    input [31:0] rs_data;
+    input pc_enable;
     
 
-    output  [31:0] inst_addr;
-    output pc4;
+    output [31:0] inst_addr;
     output reg halted;
 
-    output reg [31:0] pc;
+    output reg [31:0] pc4;
 
     // halted
 
