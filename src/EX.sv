@@ -24,9 +24,24 @@ module EX(
     baddr,
     ALU_result,
     rd_num,
+    we_cache_in,
+    we_cache_out,
+    cache_input_type_in,
+    cache_input_type_out,
+    set_dirty_in,
+    set_dirty_out,
+    set_valid_in,
+    set_valid_out,
+    memory_address_type_in,
+    memory_address_type_out,
+    is_word_in,
+    is_word_out,
+    inst_addr_in,
+    inst_addr_out,
     clk
 );
 
+    input [31:0] inst_addr_in;
     input [31:0] rs_data;
     input [31:0] rt_data_in;
     input [31:0] pc4;
@@ -43,8 +58,15 @@ module EX(
     input [31:0] imm_extend;
     //input mem_write_in;
     //input mem_read_in;
+    input we_cache_in;
+    input cache_input_type_in;
+    input set_dirty_in;
+    input set_valid_in;
+    input memory_address_type_in;
+    input is_word_in;
     input clk;
 
+    output [31:0] inst_addr_out;
     output register_write_out;
     output [1:0] register_src_out;
     output reg pc_src;
@@ -52,6 +74,12 @@ module EX(
     output reg [31:0] ALU_result;
     output [31:0] rt_data_out;
     output reg [4:0] rd_num;
+    output we_cache_in;
+    output cache_input_type_out;
+    output set_dirty_out;
+    output set_valid_out;
+    output memory_address_type_out;
+    output is_word_out;
     //output mem_write_out;
     //output mem_read_out;
 
@@ -60,6 +88,13 @@ module EX(
     assign register_write_out = register_write_in;
     assign register_src_out = register_src_in;
     assign rt_data_out = rt_data_in;
+    assign we_cache_out = we_cache_in;
+    assign cache_input_type_out = cache_input_type_in;
+    assign set_dirty_out = set_dirty_in;
+    assign set_dirty_out = set_valid_in;
+    assign memory_address_type_out = memory_address_type_in;
+    assign is_word_out = is_word_in;
+    assign inst_addr_out = inst_addr_in;
 
     // create pc controller EX
     

@@ -22,7 +22,7 @@ module IF(
     input pc_enable;
     
 
-    output [31:0] inst_addr;
+    output reg [31:0] inst_addr;
     output reg halted;
 
     output reg [31:0] pc4;
@@ -55,6 +55,14 @@ module IF(
         .pc_enable(pc_enable),
         .clk(clk)
     );
+
+    always @(posedge clk) begin 
+        if (-hold) begin
+            
+        end 
+    end
+
+endmodule
 
     endmodule
 
