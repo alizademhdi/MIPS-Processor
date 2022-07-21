@@ -55,7 +55,7 @@ module mips_core(
     wire cache_input_type;
     wire set_dirty;
     wire set_valid;
-    wire memory_address_type;
+    wire;
 
     Controller controller(
         .destination_register(destination_register),
