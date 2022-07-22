@@ -10,7 +10,7 @@ module Buffer_MEM_WB(
     mem_data_in_mem,
     cache_data_out_mem,
     byte_number_mem,
-    halted_controller_mem;
+    halted_controller_mem,
     inst_addr_wb,
     mem_addr_wb,
     ALU_result_wb,
@@ -53,6 +53,13 @@ module Buffer_MEM_WB(
     output reg [1:0] byte_number_wb;
     output reg halted_controller_wb;
 
+    dff halted(
+        .d(halted_controller_mem),
+        .q(halted_controller_wb),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
     dff #(32) inst_addr_dff(
         .d(inst_addr_mem),
         .q(inst_addr_wb),
@@ -88,8 +95,17 @@ module Buffer_MEM_WB(
         .rst_b(rst_b)
     );
 
+    wire temp;
+
     dff #(1) register_write_dff(
         .d(register_write_mem),
+        .q(temp),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff we_dff(
+        .d(temp),
         .q(register_write_wb),
         .clk(clk),
         .rst_b(rst_b)
@@ -129,5 +145,8 @@ module Buffer_MEM_WB(
         .clk(clk),
         .rst_b(rst_b)
     );
+
+    // DO NOT REMOVE THIS LINE!!!!!!!!!!!!!!!!!!!!!!!!!!
+    always $display("time: %d, register_write_mem: %b", $time, register_write_mem);
 
 endmodule

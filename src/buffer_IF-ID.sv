@@ -1,6 +1,6 @@
 module Buffer_IF_ID(
-    halted_if,
-    halted_id,
+    halted_controller_if,
+    halted_controller_id,
     inst_if,
     inst_id,
     pc4_if,
@@ -13,11 +13,11 @@ module Buffer_IF_ID(
     input rst_b;
     input [31:0] inst_if;
     input [31:0] pc4_if;
-    input halted_if;
+    input halted_controller_if;
 
     output reg [31:0] inst_id;
     output reg [31:0] pc4_id;
-    output reg halted_id;
+    output reg halted_controller_id;
 
     // move inst to next stage
     dff #(32) inst_dff(
@@ -37,8 +37,8 @@ module Buffer_IF_ID(
 
     // move halted to next stage (for register file)
     dff #(1) halted_dff(
-        .d(halted_if),
-        .q(halted_id),
+        .d(halted_controller_if),
+        .q(halted_controller_id),
         .clk(clk),
         .rst_b(rst_b)
     );

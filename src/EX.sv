@@ -142,5 +142,8 @@ module EX(
             endcase
 
         end
-    endmodule
+
+    // initial $monitor("reg_we: %b", register_write_in);
+
+endmodule
 

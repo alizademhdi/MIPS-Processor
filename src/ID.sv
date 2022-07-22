@@ -21,6 +21,7 @@ module ID(
     branch,
     pc_enable,
     halted,
+    last_stage_halted,
     halted_controller_in,
     halted_controller_out,
     imm_extend,
@@ -47,10 +48,10 @@ module ID(
     input register_write_in;
     input cache_hit;
     input cache_dirty;
-    input halted;
     input halted_controller_in;
     input clk;
     input rst_b;
+    input last_stage_halted;
 
 
     output [31:0] inst_addr_out;
@@ -78,7 +79,8 @@ module ID(
     output reg set_valid;
     output reg memory_address_type;
     output reg is_word;
-    output halted_controller_out;
+    output reg halted_controller_out;
+    output halted;
 
     assign pc4_out = pc4_in;
     assign inst_50 = inst[5:0];
@@ -87,9 +89,12 @@ module ID(
     assign inst_106 = inst[10:6];
     assign inst_addr_out = inst_addr_in;
     assign halted_controller_out = halted_controller_in;
+    assign halted = last_stage_halted;
+
+    wire [5:0] opcode;
+    assign opcode = inst == 32'b0 ? 6'b111111 : inst[31:26];
 
     // Create register file
-
     regfile regs(
         .rs_data(rs_data),
         .rt_data(rt_data),
@@ -119,7 +124,7 @@ module ID(
         .register_write(register_write_out),
         .is_unsigned(is_unsigned),
         .pc_enable(pc_enable),
-        .opcode(inst[31:26]),
+        .opcode(opcode),
         .we_cache(we_cache),
         .cache_input_type(cache_input_type),
         .memory_address_type(memory_address_type),
@@ -140,5 +145,6 @@ module ID(
         .is_unsign_extend(is_unsigned)
     );
 
+    // always $display("time: %d, first_reg: %d, second_reg: %d, imm: %d", $time, rs_data, rt_data, imm_extend);
 
     endmodule

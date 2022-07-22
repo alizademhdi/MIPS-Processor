@@ -114,6 +114,6 @@ module MEM(
             cache_data_in = rt_data;
     end
 
-
+    // always $display("time: %d, ALU_result_out_mem: %d", $time, ALU_result_out);
 
 endmodule

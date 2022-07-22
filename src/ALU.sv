@@ -118,4 +118,6 @@ module ALU(
         zero = (data_out == 0) ? 1 : 0;
     end
 
+    // always $display("time: %d, data1: %d, data2: %d, ALU result: %d", $time, data_in1, data_in2, data_out);
+
 endmodule

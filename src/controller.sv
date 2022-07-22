@@ -109,6 +109,9 @@ module Controller(
     parameter J_code = 6'b000010;
     parameter JAL_code = 6'b000011;
 
+    // NOP
+    parameter NOP_code = 6'b111111;
+
     always @(posedge clk)
     begin
         p_state = n_state;
@@ -117,6 +120,19 @@ module Controller(
     always @(*)
     begin
         case (opcode)
+            NOP_code:
+            begin
+                jump = 0;
+                branch = 0;
+                jump_register = 0;
+                we_memory = 0;
+                destination_register = 2'b00;
+                register_src = 0; // 01 for memory and 00 for ALU result and 10 for PC
+                ALU_OP = 0;
+                ALU_src = 0;
+                register_write = 0;
+                is_unsigned = 0;
+            end
             Rtype_code:
             begin
                 destination_register = 2'b01;
@@ -548,5 +564,5 @@ module Controller(
             default: n_state = S0;
         endcase
     end
-    
+
 endmodule

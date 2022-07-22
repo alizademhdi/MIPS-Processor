@@ -13,7 +13,7 @@ module Buffer_ID_EX(
     we_memory_id,
     register_write_id,
     register_src_id,
-    halted_controller_id;
+    halted_controller_id,
     branch_id,
     imm_extend_id,
     cache_input_type_id,
@@ -36,7 +36,7 @@ module Buffer_ID_EX(
     we_memory_ex,
     register_write_ex,
     register_src_ex,
-    halted_controller_ex;
+    halted_controller_ex,
     branch_ex,
     imm_extend_ex,
     cache_input_type_ex,
@@ -89,7 +89,6 @@ module Buffer_ID_EX(
     output reg we_memory_ex;
     output reg register_write_ex;
     output reg [1:0] register_src_ex;
-    output reg halted_controller_ex;
     output reg branch_ex;
     output reg [31:0] imm_extend_ex;
     output reg cache_input_type_ex;
@@ -98,6 +97,16 @@ module Buffer_ID_EX(
     output reg set_valid_ex;
     output reg memory_address_type_ex;
     output reg is_word_ex;
+    output halted_controller_ex;
+
+    // initial $monitor("reg_we: %b", register_write_id);
+
+    dff halted(
+        .d(halted_controller_id),
+        .q(halted_controller_ex),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
 
     dff #(32) inst_addr_dff(
         .d(inst_addr_id),

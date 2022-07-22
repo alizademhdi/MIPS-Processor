@@ -20,7 +20,7 @@ MEM = $(ASM:%.s=%.mem)
 
 assemble: $(MEM)
 
-INPUT ?= test/custom/memory_byte
+INPUT ?= test/default/brtest0
 
 obj_dir/Vmips_machine: src/*.sv 323src/*.sv 323src/sim_main.cpp
 	docker run -ti -v ${PWD}:/work												\
@@ -31,7 +31,7 @@ obj_dir/Vmips_machine: src/*.sv 323src/*.sv 323src/sim_main.cpp
 
 compile: obj_dir/Vmips_machine
 
-sim: compile #assemble
+sim: compile assemble
 	cp ${INPUT}.mem output/instructions.mem
 	./obj_dir/Vmips_machine
 

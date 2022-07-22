@@ -62,7 +62,14 @@ module Buffer_EX_MEM(
     output reg set_valid_mem;
     output reg memory_address_type_mem;
     output reg is_word_mem;
-    output reg halted_controller_mem;
+    output halted_controller_mem;
+
+    dff halted(
+        .d(halted_controller_ex),
+        .q(halted_controller_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
 
     dff #(32) inst_addr_dff(
         .d(inst_addr_ex),
@@ -161,6 +168,8 @@ module Buffer_EX_MEM(
         .clk(clk),
         .rst_b(rst_b)
     );
+
+    // always $display("time: %d, ALU_result_ex: %d, ALU_result_mem: %d", $time, ALU_result_ex, ALU_result_mem);
 
 
 endmodule

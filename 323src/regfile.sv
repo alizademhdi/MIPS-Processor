@@ -57,4 +57,7 @@ module regfile(
 			$fclose(fd);
 		end
 	end
+
+    always $display("time: %d, t0: %d, v0: %d, we: %b\n", $time, data[8], data[2], rd_we);
+
 endmodule

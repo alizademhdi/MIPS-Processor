@@ -9,7 +9,7 @@ module WB(
     ALU_result,
     byte_number,
     halted_controller,
-    halted,
+    last_stage_halted,
     clk
 );
 
@@ -25,10 +25,10 @@ module WB(
 
     output reg [31:0] rd_data;
     output [4:0] rd_num_out;
-    output halted;
+    output last_stage_halted;
 
     assign rd_num_out = rd_num_in;
-    assign halted = halted_controller;
+    assign last_stage_halted = halted_controller;
 
     always @(*)
         begin
@@ -56,4 +56,7 @@ module WB(
             endcase
 
         end
-    endmodule
+
+    // always $display("time: %d, ALU_result_out_wb: %d, rd_data: %d", $time, ALU_result, rd_data);
+
+endmodule

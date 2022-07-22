@@ -4,9 +4,11 @@
 
 main:
         addiu $v0, $zero, 0xa
-l_0:    
+l_0:
         addiu $5, $zero, 1
         j l_1
+        nop
+        nop
         nop
         nop
         nop
@@ -14,7 +16,7 @@ l_0:
         ori $0, $0, 0
         ori $0, $0, 0
         addiu $5, $zero, 100
-        syscall        
+        syscall
 l_1:
         bne $zero, $zero, l_3
         nop
@@ -43,6 +45,6 @@ l_4:
         nop
         nop
         syscall
-        
-         
-        
+
+
+
