@@ -23,9 +23,9 @@ module mips_core(
     output halted;
 
     wire [31:0] pc4_if;
-    wire pc_src;
+    //wire pc_src;
     wire [31:0] inst_if;
-    wire [31:0] baddr;
+    //wire [31:0] baddr;
     wire [31:0] rs_data_id;
     wire [31:0] rs_data_ex;
     wire [31:0] rt_data_id;
@@ -39,14 +39,18 @@ module mips_core(
 
     IF IF(
         .pc4(pc4_if),
-        .pc_src(pc_src),
-        .baddr(baddr),
+        //.pc_src(pc_src),
+        //.baddr(baddr),
         .inst(inst_if),
         .inst_addr(inst_addr),
         .pc_enable(pc_enable),
         .rs_data(rs_data_id),
         .jump_register(jump_register),
         .jump(jump),
+        .branch(branch),
+        .imm_extend(imm_extend),
+        .zero(zero),
+        .pc_enable(pc_enable),
         .halted_controller(halted_controller_if),
         .clk(clk)
     );
@@ -119,6 +123,7 @@ module mips_core(
         .register_src(register_src_id),
         .jump(jump),
         .jump_register(jump),
+        .jea(jea),
         .branch(branch_id),
         .pc_enable(pc_enable),
         .halted(halted),
@@ -190,6 +195,10 @@ module mips_core(
         .register_write_id(register_write_id),
         .register_src_id(register_src_id),
         .branch_id(branch_id),
+        .jump_id(jump_id),
+        .jump_register_id(jump_register_id),
+        .jea_id(jea_id),
+        .pc_enable_id(pc_enable_id),
         .imm_extend_id(imm_extend_id),
         .cache_input_type_id(cache_input_type_id),
         .we_cache_id(we_cache_id),
@@ -212,6 +221,10 @@ module mips_core(
         .register_write_ex(register_write_in_ex),
         .register_src_ex(register_src_in_ex),
         .branch_ex(branch_ex),
+        .jump_ex(jump_ex),
+        .jump_register_ex(jump_register_ex),
+        .jea_ex(jea_ex),
+        .pc_enable_ex(pc_enable_ex),
         .imm_extend_ex(imm_extend_ex),
         .cache_input_type_ex(cache_input_type_in_ex),
         .we_cache_ex(we_cache_in_ex),
@@ -230,10 +243,12 @@ module mips_core(
     wire halted_controller_out_ex;
 
     EX EX(
-        .rs_data(rs_data_ex),
+        .rs_data_in(rs_data_ex),
+        .rs_data_out(rs_data_if),
         .rt_data_in(rt_data_in_ex),
         .rt_data_out(rt_data_out_ex),
-        .pc4(pc4_ex),
+        .pc4_in(pc4_ex),
+        .pc4_out(pc4_if),
         .inst_50(inst_50_ex),
         .inst_2016(inst_2016_ex),
         .inst_1511(inst_1511_ex),
@@ -245,8 +260,19 @@ module mips_core(
         .register_write_out(register_write_out_ex),
         .register_src_in(register_src_in_ex),
         .register_src_out(register_src_out_ex),
-        .branch(branch_ex),
-        .imm_extend(imm_extend_ex),
+        .branch_in(branch_ex),
+        .branch_out(branch_if),
+        .jump_in(jump_ex),
+        .jump_out(jump_if),
+        .jump_register_in(jump_register_ex),
+        .jump_register_out(jump_register_if),
+        .jea_in(jea_ex),
+        .jea_out(jea_if),
+        .pc_enable_in(pc_enable_ex),
+        .pc_enable_out(pc_enable_if),
+        .zero(zero)
+        .imm_extend_in(imm_extend_ex),
+        .imm_extend_out(imm_extend_out),
         .pc_src(pc_src),
         .baddr(baddr),
         .ALU_result(ALU_result_ex),

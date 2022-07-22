@@ -18,6 +18,7 @@ module ID(
     register_src,
     jump,
     jump_register,
+    jea,
     branch,
     pc_enable,
     halted,
@@ -70,6 +71,7 @@ module ID(
     output reg [1:0] register_src;
     output reg jump;
     output reg jump_register;
+    output [25:0] jea;
     output reg branch;
     output reg pc_enable;
     output reg [31:0] imm_extend;
@@ -90,6 +92,7 @@ module ID(
     assign inst_addr_out = inst_addr_in;
     assign halted_controller_out = halted_controller_in;
     assign halted = last_stage_halted;
+    assign jea = inst[25:0];
 
     wire [5:0] opcode;
     assign opcode = inst == 32'b0 ? 6'b111111 : inst[31:26];

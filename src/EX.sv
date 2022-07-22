@@ -1,8 +1,10 @@
 module EX(
-    rs_data,
+    rs_data_in,
+    rs_data_out,
     rt_data_in,
     rt_data_out,
-    pc4,
+    pc4_in,
+    pc4_out,
     inst_50,
     inst_2016,
     inst_1511,
@@ -14,10 +16,21 @@ module EX(
     register_write_out,
     register_src_in,
     register_src_out,
-    branch,
-    imm_extend,
-    pc_src,
-    baddr,
+    branch_in,
+    branch_out,
+    jump_in,
+    jump_out,
+    jump_register_in,
+    jump_register_out,
+    jea_in,
+    jea_out,
+    pc_enable_in,
+    pc_enable_out,
+    zero,
+    imm_extend_in,
+    imm_extend_out,
+    //pc_src,
+    //baddr,
     ALU_result,
     rd_num,
     we_cache_in,
@@ -42,9 +55,9 @@ module EX(
 );
 
     input [31:0] inst_addr_in;
-    input [31:0] rs_data;
+    input [31:0] rs_data_in;
     input [31:0] rt_data_in;
-    input [31:0] pc4;
+    input [31:0] pc4_in;
     input [5:0] inst_50;
     input [4:0] inst_2016;
     input [4:0] inst_1511;
@@ -54,8 +67,12 @@ module EX(
     input [4:0] ALU_OP;
     input register_write_in;
     input [1:0] register_src_in;
-    input branch;
-    input [31:0] imm_extend;
+    input branch_in;
+    input jump_in;
+    input jump_register_in;
+    input [25:0] jea_in;
+    input pc_enable_in;
+    input [31:0] imm_extend_in;
     input we_cache_in;
     input we_memory_in;
     input cache_input_type_in;
@@ -66,14 +83,23 @@ module EX(
     input halted_controller_in;
     input clk;
 
+    output [31:0] rs_data_out;
     output [31:0] inst_addr_out;
     output register_write_out;
     output [1:0] register_src_out;
-    output reg pc_src;
-    output reg [31:0] baddr;
+    output [31:0] pc4_out;
+    //output reg pc_src;
+    //output reg [31:0] baddr;
     output reg [31:0] ALU_result;
     output [31:0] rt_data_out;
     output reg [4:0] rd_num;
+    output [31:0] imm_extend_out;
+    output branch_out;
+    output jump_out;
+    output jump_register_out;
+    output [25:0] jea_out;
+    output pc_enable_out;
+    output reg zero;
     output we_cache_out;
     output we_memory_out;
     output cache_input_type_out;
@@ -83,9 +109,17 @@ module EX(
     output halted_controller_out;
     output is_word_out;
 
+    assign rs_data_out = rs_data_in;
     assign register_write_out = register_write_in;
     assign register_src_out = register_src_in;
     assign rt_data_out = rt_data_in;
+    assign pc4_out = pc4_in;
+    assign imm_extend_out = imm_extend_in;
+    assign branch_out = branch_in;
+    assign jump_out = jump_in;
+    assign jump_register_out = jump_register_in;
+    assign jea_out = jea_in;
+    assign pc_enable_out = pc_enable_in;
     assign we_cache_out = we_cache_in;
     assign we_memory_out = we_memory_in;
     assign cache_input_type_out = cache_input_type_in;
@@ -96,19 +130,21 @@ module EX(
     assign inst_addr_out = inst_addr_in;
     assign halted_controller_out = halted_controller_in;
 
+    /*
     // create pc controller EX
 
     wire zero;
 
     pc_controller_EX pc_controller_EX(
-        .pc4(pc4),
+        .pc4_in(pc4_in),
         .branch(branch),
-        .imm_sign_extend(imm_extend),
+        .imm_sign_extend(imm_extend_in),
         .pc_src(pc_src),
         .baddr(baddr),
         .zero(zero),
         .clk(clk)
     );
+    */
 
     // Create ALU
     reg [31:0] data_in2;
@@ -125,7 +161,7 @@ module EX(
     always @(ALU_src)
     begin
         if (ALU_src) begin
-            data_in2 = imm_extend;
+            data_in2 = imm_extend_in;
         end else
             data_in2 = rt_data_in;
     end

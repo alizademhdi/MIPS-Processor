@@ -15,6 +15,10 @@ module Buffer_ID_EX(
     register_src_id,
     halted_controller_id,
     branch_id,
+    jump_id,
+    jump_register_id,
+    jea_id,
+    pc_enable_id,
     imm_extend_id,
     cache_input_type_id,
     we_cache_id,
@@ -38,6 +42,10 @@ module Buffer_ID_EX(
     register_src_ex,
     halted_controller_ex,
     branch_ex,
+    jump_ex,
+    jump_register_ex,
+    jea_ex,
+    pc_enable_ex,
     imm_extend_ex,
     cache_input_type_ex,
     we_cache_ex,
@@ -64,6 +72,10 @@ module Buffer_ID_EX(
     input register_write_id;
     input [1:0] register_src_id;
     input halted_controller_id;
+    input jump_id;
+    input jump_register_id;
+    input pc_enable_id;
+    input [25:0] jea_id;
     input branch_id;
     input [31:0] imm_extend_id;
     input cache_input_type_id;
@@ -89,6 +101,10 @@ module Buffer_ID_EX(
     output reg we_memory_ex;
     output reg register_write_ex;
     output reg [1:0] register_src_ex;
+    output reg jump_ex;
+    output reg jump_register_ex;
+    output reg [25:0] jea_ex;
+    output reg pc_enable_ex;
     output reg branch_ex;
     output reg [31:0] imm_extend_ex;
     output reg cache_input_type_ex;
@@ -216,6 +232,34 @@ module Buffer_ID_EX(
     dff #(1) branch_dff(
         .d(branch_id),
         .q(branch_ex),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff #(1) jump_dff(
+        .d(jump_id),
+        .q(jump_ex),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff #(1) pc_enable_dff(
+        .d(pc_enable_id),
+        .q([pc_enable_ex]),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff #(1) jump_register_dff(
+        .d(jump_register_id),
+        .q(jump_register_ex),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff #(26) jea_dff(
+        .d(jea_id),
+        .q(jea_ex),
         .clk(clk),
         .rst_b(rst_b)
     );

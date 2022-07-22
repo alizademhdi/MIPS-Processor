@@ -1,4 +1,5 @@
 module pc_controller(
+    pc4,
     pc,
     jea,
     branch,
@@ -11,6 +12,7 @@ module pc_controller(
     clk
 );
     input wire [25:0] jea;
+    input [31:0] pc4;
     input wire branch;
     input wire jump;
     input wire jump_register;
@@ -26,8 +28,8 @@ module pc_controller(
     initial
 		pc = 32'd0;
 
-	wire [31:0] pc4;  // PC + 4
-	assign pc4 = pc + 4;
+	//wire [31:0] pc4;  // PC + 4
+	//assign pc4 = pc + 4;
 
     wire [31:0] jaddr;
     assign jaddr = {pc4[31:28], jea, 2'b00};
