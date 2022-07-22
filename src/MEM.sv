@@ -1,17 +1,14 @@
 module MEM(
-    //mem_write, // Need to be replaced
-    //mem_read, // Need to be replaced
     register_write_in,
     register_write_out,
     register_src_in,
     register_src_out,
     ALU_result_in,
     ALU_result_out,
-    rt_data_in,
-    rt_data_out,
     rd_num_in,
     rd_num_out,
     we_cache,
+    we_memory,
     cache_input_type,
     set_dirty,
     set_valid,
@@ -25,6 +22,11 @@ module MEM(
     cache_dirty,
     inst_addr_in,
     inst_addr_out,
+    cache_data_out,
+    rt_data,
+    byte_number,
+    halted_controller_in,
+    halted_controller_out,
     clk
 );
 
@@ -32,37 +34,40 @@ module MEM(
     input [7:0] mem_data_out[0:3];
     input [31:0] ALU_result_in;
     input we_cache;
+    input we_memory;
     input cache_input_type;
     input set_dirty;
     input set_valid;
     input memory_address_type;
     input is_word_in;
-    input rt_data_in;
     input [4:0] rd_num_in;
-    input register_src_in;
+    input [1:0] register_src_in;
     input register_write_in;
+    input [31:0] rt_data;
+    input halted_controller_in;
     input clk;
 
     output [31:0] inst_addr_out;
     output reg cache_hit;
-    output reg cahche_dirty;
+    output reg cache_dirty;
     output reg [31:0] mem_addr;
     output [31:0] ALU_result_out;
-    output rt_data_out;
     output [4:0] rd_num_out;
-    output register_src_out;
+    output [1:0] register_src_out;
     output register_write_out;
     output is_word_out;
     output [7:0] mem_data_in[0:3];
     output reg [7:0] cache_data_out[0:3];
+    output reg [1:0] byte_number;
+    output halted_controller_out;
 
     assign register_write_out = register_write_in;
     assign register_src_out = register_src_in;
     assign rd_num_out = rd_num_in;
-    assign rt_data_out = rt_data_in;
     assign ALU_result_out = ALU_result_in;
     assign inst_addr_out = inst_addr_in;
     assign is_word_out = is_word_in;
+    assign halted_controller_out = halted_controller_in;
 
     assign mem_data_in[0] = cache_data_out[0];
     assign mem_data_in[1] = cache_data_out[1];
@@ -75,7 +80,7 @@ module MEM(
             mem_addr = memory_write_address;
         end
         else begin
-            mem_addr = ALU_result;
+            mem_addr = ALU_result_in;
         end
     end
 
@@ -83,7 +88,6 @@ module MEM(
 
     wire [31:0] memory_write_address;
     reg [31:0] cache_data_in;
-    wire [1:0] byte_number;
 
     Cache cache(
         .cache_hit(cache_hit),
@@ -92,7 +96,7 @@ module MEM(
         .memory_write_address(memory_write_address),
         .byte_number(byte_number),
         .we_cache(we_cache),
-        .cache_addr(ALU_result),
+        .cache_addr(ALU_result_in),
         .data_in(cache_data_in),
         .set_valid(set_valid),
         .set_dirty(set_dirty),
@@ -110,6 +114,6 @@ module MEM(
             cache_data_in = rt_data;
     end
 
-    
+
 
 endmodule

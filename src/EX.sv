@@ -15,10 +15,6 @@ module EX(
     register_src_in,
     register_src_out,
     branch,
-    //mem_write_in, // Need to be replaced
-    //mem_write_out,
-    //mem_read_in, // Need to be replaced
-    //mem_read_out,
     imm_extend,
     pc_src,
     baddr,
@@ -26,6 +22,8 @@ module EX(
     rd_num,
     we_cache_in,
     we_cache_out,
+    we_memory_in,
+    we_memory_out,
     cache_input_type_in,
     cache_input_type_out,
     set_dirty_in,
@@ -38,6 +36,8 @@ module EX(
     is_word_out,
     inst_addr_in,
     inst_addr_out,
+    halted_controller_in,
+    halted_controller_out,
     clk
 );
 
@@ -45,7 +45,7 @@ module EX(
     input [31:0] rs_data;
     input [31:0] rt_data_in;
     input [31:0] pc4;
-    input [6:0] inst_50;
+    input [5:0] inst_50;
     input [4:0] inst_2016;
     input [4:0] inst_1511;
     input [4:0] inst_106;
@@ -56,14 +56,14 @@ module EX(
     input [1:0] register_src_in;
     input branch;
     input [31:0] imm_extend;
-    //input mem_write_in;
-    //input mem_read_in;
     input we_cache_in;
+    input we_memory_in;
     input cache_input_type_in;
     input set_dirty_in;
     input set_valid_in;
     input memory_address_type_in;
     input is_word_in;
+    input halted_controller_in;
     input clk;
 
     output [31:0] inst_addr_out;
@@ -74,32 +74,32 @@ module EX(
     output reg [31:0] ALU_result;
     output [31:0] rt_data_out;
     output reg [4:0] rd_num;
-    output we_cache_in;
+    output we_cache_out;
+    output we_memory_out;
     output cache_input_type_out;
     output set_dirty_out;
     output set_valid_out;
     output memory_address_type_out;
+    output halted_controller_out;
     output is_word_out;
-    //output mem_write_out;
-    //output mem_read_out;
 
-    assign mem_write_out = mem_write_in;
-    assign mem_read_out = mem_read_in;
     assign register_write_out = register_write_in;
     assign register_src_out = register_src_in;
     assign rt_data_out = rt_data_in;
     assign we_cache_out = we_cache_in;
+    assign we_memory_out = we_memory_in;
     assign cache_input_type_out = cache_input_type_in;
     assign set_dirty_out = set_dirty_in;
     assign set_dirty_out = set_valid_in;
     assign memory_address_type_out = memory_address_type_in;
     assign is_word_out = is_word_in;
     assign inst_addr_out = inst_addr_in;
+    assign halted_controller_out = halted_controller_in;
 
     // create pc controller EX
-    
+
     wire zero;
-    
+
     pc_controller_EX pc_controller_EX(
         .pc4(pc4),
         .branch(branch),
@@ -127,7 +127,7 @@ module EX(
         if (ALU_src) begin
             data_in2 = imm_extend;
         end else
-            data_in2 = rt_data;
+            data_in2 = rt_data_in;
     end
 
     always @(inst_1511, inst_2016)
@@ -143,4 +143,4 @@ module EX(
 
         end
     endmodule
-   
+

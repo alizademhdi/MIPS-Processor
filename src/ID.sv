@@ -13,8 +13,6 @@ module ID(
     destination_register,
     ALU_src,
     ALU_OP,
-    //mem_write, // Need to be replaced
-    //mem_read, // Need to be replaced
     register_write_out,
     register_write_in,
     register_src,
@@ -23,13 +21,15 @@ module ID(
     branch,
     pc_enable,
     halted,
+    halted_controller_in,
+    halted_controller_out,
     imm_extend,
     cache_input_type,
     set_dirty,
     set_valid,
     memory_address_type,
     we_cache,
-    mem_write_en,
+    we_memory,
     is_word,
     cache_hit,
     cache_dirty,
@@ -45,27 +45,26 @@ module ID(
     input [31:0] rd_data;
     input [4:0] rd_num;
     input register_write_in;
-    input mem_write_en;
     input cache_hit;
     input cache_dirty;
     input halted;
+    input halted_controller_in;
     input clk;
     input rst_b;
-    
+
 
     output [31:0] inst_addr_out;
     output reg [31:0] rs_data;
     output reg [31:0] rt_data;
     output [31:0] pc4_out;
-    output [6:0] inst_50;
+    output [5:0] inst_50;
     output [4:0] inst_2016;
     output [4:0] inst_1511;
     output [4:0] inst_106;
     output reg [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
     output reg ALU_src;
     output reg [4:0] ALU_OP;
-    //output reg mem_write;
-    //output reg mem_read;
+    output reg we_memory;
     output reg register_write_out;
     output reg [1:0] register_src;
     output reg jump;
@@ -73,12 +72,13 @@ module ID(
     output reg branch;
     output reg pc_enable;
     output reg [31:0] imm_extend;
-    output reg we_cache;
     output reg cache_input_type;
+    output reg we_cache;
     output reg set_dirty;
     output reg set_valid;
     output reg memory_address_type;
     output reg is_word;
+    output halted_controller_out;
 
     assign pc4_out = pc4_in;
     assign inst_50 = inst[5:0];
@@ -86,6 +86,7 @@ module ID(
     assign inst_1511 = inst[15:11];
     assign inst_106 = inst[10:6];
     assign inst_addr_out = inst_addr_in;
+    assign halted_controller_out = halted_controller_in;
 
     // Create register file
 
@@ -111,7 +112,7 @@ module ID(
         .jump(jump),
         .branch(branch),
         .jump_register(jump_register),
-        .we_memory(mem_write_en),
+        .we_memory(we_memory),
         .register_src(register_src),
         .ALU_OP(ALU_OP),
         .ALU_src(ALU_src),

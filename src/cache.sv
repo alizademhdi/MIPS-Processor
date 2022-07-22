@@ -63,7 +63,6 @@ module Cache (
     begin
         if (we_cache) begin
             if(is_word) begin
-                $display("shit");
                 cache[block_addr] <= data_in;
                 tag_array[block_addr] <= cache_addr[15:13];
             end

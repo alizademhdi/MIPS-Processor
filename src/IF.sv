@@ -8,7 +8,7 @@ module IF(
     rs_data,
     jump_register,
     jump,
-    halted,
+    halted_controller,
     clk
 );
 
@@ -20,21 +20,22 @@ module IF(
     input jump_register;
     input [31:0] rs_data;
     input pc_enable;
-    
+    reg [31:0] pc;
+
 
     output reg [31:0] inst_addr;
-    output reg halted;
+    output reg halted_controller;
 
     output reg [31:0] pc4;
 
-    // halted
+    // halted_controller
 
     always @(inst)
     begin
         if(inst == 32'h000c)
-            halted = 1;
+            halted_controller = 1;
         else
-            halted = 0;
+            halted_controller = 0;
     end
 
     initial
