@@ -226,7 +226,6 @@ module mips_core_v0(
 
 
     // Create PC controller
-
     pc_controller pc_controller(
         .pc(inst_addr),
         .jea(inst[25:0]),

@@ -3,8 +3,6 @@ module EX(
     rs_data_out,
     rt_data_in,
     rt_data_out,
-    pc4_in,
-    pc4_out,
     inst_50,
     inst_2016,
     inst_1511,
@@ -29,8 +27,6 @@ module EX(
     zero,
     imm_extend_in,
     imm_extend_out,
-    //pc_src,
-    //baddr,
     ALU_result,
     rd_num,
     we_cache_in,
@@ -57,7 +53,6 @@ module EX(
     input [31:0] inst_addr_in;
     input [31:0] rs_data_in;
     input [31:0] rt_data_in;
-    input [31:0] pc4_in;
     input [5:0] inst_50;
     input [4:0] inst_2016;
     input [4:0] inst_1511;
@@ -87,9 +82,6 @@ module EX(
     output [31:0] inst_addr_out;
     output register_write_out;
     output [1:0] register_src_out;
-    output [31:0] pc4_out;
-    //output reg pc_src;
-    //output reg [31:0] baddr;
     output reg [31:0] ALU_result;
     output [31:0] rt_data_out;
     output reg [4:0] rd_num;
@@ -113,7 +105,6 @@ module EX(
     assign register_write_out = register_write_in;
     assign register_src_out = register_src_in;
     assign rt_data_out = rt_data_in;
-    assign pc4_out = pc4_in;
     assign imm_extend_out = imm_extend_in;
     assign branch_out = branch_in;
     assign jump_out = jump_in;
@@ -130,21 +121,6 @@ module EX(
     assign inst_addr_out = inst_addr_in;
     assign halted_controller_out = halted_controller_in;
 
-    /*
-    // create pc controller EX
-
-    wire zero;
-
-    pc_controller_EX pc_controller_EX(
-        .pc4_in(pc4_in),
-        .branch(branch),
-        .imm_sign_extend(imm_extend_in),
-        .pc_src(pc_src),
-        .baddr(baddr),
-        .zero(zero),
-        .clk(clk)
-    );
-    */
 
     // Create ALU
     reg [31:0] data_in2;
@@ -153,7 +129,7 @@ module EX(
         .data_out(ALU_result),
         .zero(zero),
         .ALU_OP(ALU_OP),
-        .data_in1(rs_data),
+        .data_in1(rs_data_in),
         .data_in2(data_in2),
         .shift_amount(inst_106)
     );

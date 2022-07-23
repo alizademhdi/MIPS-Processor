@@ -2,7 +2,6 @@ module Buffer_ID_EX(
     inst_addr_id,
     rs_data_id,
     rt_data_id,
-    pc4_id,
     inst_50_id,
     inst_2016_id,
     inst_1511_id,
@@ -29,7 +28,7 @@ module Buffer_ID_EX(
     inst_addr_ex,
     rs_data_ex,
     rt_data_ex,
-    pc4_ex,
+
     inst_50_ex,
     inst_2016_ex,
     inst_1511_ex,
@@ -60,7 +59,6 @@ module Buffer_ID_EX(
     input [31:0] inst_addr_id;
     input [31:0] rs_data_id;
     input [31:0] rt_data_id;
-    input [31:0] pc4_id;
     input [5:0] inst_50_id;
     input [4:0] inst_2016_id;
     input [4:0] inst_1511_id;
@@ -90,7 +88,6 @@ module Buffer_ID_EX(
     output reg [31:0] inst_addr_ex;
     output reg [31:0] rs_data_ex;
     output reg [31:0] rt_data_ex;
-    output reg [31:0] pc4_ex;
     output reg [5:0] inst_50_ex;
     output reg [4:0] inst_2016_ex;
     output reg [4:0] inst_1511_ex;
@@ -141,13 +138,6 @@ module Buffer_ID_EX(
     dff #(32) rt_data_dff(
         .d(rt_data_id),
         .q(rt_data_ex),
-        .clk(clk),
-        .rst_b(rst_b)
-    );
-
-    dff #(32) pc4_dff(
-        .d(pc4_id),
-        .q(pc4_ex),
         .clk(clk),
         .rst_b(rst_b)
     );
@@ -245,7 +235,7 @@ module Buffer_ID_EX(
 
     dff #(1) pc_enable_dff(
         .d(pc_enable_id),
-        .q([pc_enable_ex]),
+        .q(pc_enable_ex),
         .clk(clk),
         .rst_b(rst_b)
     );

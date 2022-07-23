@@ -1,10 +1,7 @@
 module IF(
-    pc4,
-    //pc_src,
-    //baddr,
+    pc,
     inst,
     inst_addr,
-    pc_enable,
     rs_data,
     jump_register,
     jump,
@@ -18,8 +15,6 @@ module IF(
 
     input [31:0] inst;
     input clk;
-    //input  pc_src;
-    //input [31:0] baddr;
     input jump;
     input jump_register;
     input branch;
@@ -27,16 +22,13 @@ module IF(
     input zero;
     input [31:0] rs_data;
     input pc_enable;
-    reg [31:0] pc;
-
 
     output reg [31:0] inst_addr;
     output reg halted_controller;
 
-    output reg [31:0] pc4;
+    output reg [31:0] pc;
 
     // halted_controller
-
     always @(inst)
     begin
         if(inst == 32'h000c)
@@ -46,23 +38,9 @@ module IF(
     end
 
 
-    /*
-    // create pc controller IF
+    wire [31:0] pc;
 
-    pc_controller_IF pc_controller_IF(
-        .pc(inst_addr),
-        .jea(inst[25:0]),
-        .jump(jump),
-        .jump_register(jump_register),
-        .rs_data(rs_data),
-        .pc_src(pc_src),
-        .baddr(baddr),
-        .pc_enable(pc_enable),
-        .clk(clk)
-    );
-    */
     pc_controller pc_controller(
-        .pc4(pc4),
         .pc(pc),
         .jea(inst[25:0]),
         .branch(branch),
@@ -73,6 +51,6 @@ module IF(
         .zero(zero),
         .pc_enable(pc_enable),
         .clk(clk)
-    )
+    );
 
 endmodule

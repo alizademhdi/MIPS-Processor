@@ -1,8 +1,6 @@
 module ID(
     rs_data,
     rt_data,
-    pc4_in,
-    pc4_out,
     inst,
     inst_50,
     inst_2016,
@@ -42,7 +40,6 @@ module ID(
 );
 
     input [31:0] inst_addr_in;
-    input [31:0] pc4_in;
     input [31:0] inst;
     input [31:0] rd_data;
     input [4:0] rd_num;
@@ -58,7 +55,6 @@ module ID(
     output [31:0] inst_addr_out;
     output reg [31:0] rs_data;
     output reg [31:0] rt_data;
-    output [31:0] pc4_out;
     output [5:0] inst_50;
     output [4:0] inst_2016;
     output [4:0] inst_1511;
@@ -84,7 +80,6 @@ module ID(
     output reg halted_controller_out;
     output halted;
 
-    assign pc4_out = pc4_in;
     assign inst_50 = inst[5:0];
     assign inst_2016 = inst[20:16];
     assign inst_1511 = inst[15:11];
@@ -141,7 +136,6 @@ module ID(
     );
 
     // Create imm extender
-
     Extender sign_extender(
         .num(inst[15:0]),
         .extended(imm_extend),
@@ -150,4 +144,4 @@ module ID(
 
     // always $display("time: %d, first_reg: %d, second_reg: %d, imm: %d", $time, rs_data, rt_data, imm_extend);
 
-    endmodule
+endmodule
