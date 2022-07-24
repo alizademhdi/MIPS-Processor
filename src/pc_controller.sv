@@ -41,7 +41,7 @@ module pc_controller(
         if (pc_enable) begin
             if (jump == 1)
                 pc = jaddr;
-            else if (((branch & zero) & (~is_nop)) == 1)
+            else if (((branch && zero) && ~is_nop) == 1)
                 pc = baddr;
             else if (jump_register == 1)
                 pc = rs_data;

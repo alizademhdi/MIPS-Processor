@@ -45,6 +45,8 @@ module EX(
     is_word_out,
     inst_addr_in,
     inst_addr_out,
+    is_nop_in,
+    is_nop_out,
     halted_controller_in,
     halted_controller_out,
     clk
@@ -77,6 +79,7 @@ module EX(
     input is_word_in;
     input halted_controller_in;
     input clk;
+    input is_nop_in;
 
     output [31:0] rs_data_out;
     output [31:0] inst_addr_out;
@@ -100,6 +103,7 @@ module EX(
     output memory_address_type_out;
     output halted_controller_out;
     output is_word_out;
+    output is_nop_out;
 
     assign rs_data_out = rs_data_in;
     assign register_write_out = register_write_in;
@@ -120,6 +124,7 @@ module EX(
     assign is_word_out = is_word_in;
     assign inst_addr_out = inst_addr_in;
     assign halted_controller_out = halted_controller_in;
+    assign is_nop_out = is_nop_in;
 
 
     // Create ALU

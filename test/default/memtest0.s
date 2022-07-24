@@ -17,7 +17,7 @@ main:
         nop
         nop
         addiu  $8, $7, 30000
-        
+
         #;; Place a test pattern in memory
         sw     $5, 0($3)
         sw     $6, 4($3)
@@ -42,7 +42,7 @@ main:
         lw     $14,  0($3)
         lw     $15,  4($3)
         lw     $16,  8($3)
-               
+
         #;; Calculate a "checksum" for easy comparison
         add    $17, $zero, $9
         nop
@@ -73,11 +73,11 @@ main:
         nop
         nop
         add    $17, $17, $16
-        
-        #;;  Quit out 
+
+        #;;  Quit out
         addiu $v0, $zero, 0xa
         nop
         nop
         nop
         syscall
-        
+

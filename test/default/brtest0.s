@@ -46,7 +46,11 @@ l_3:
         addiu $8, $zero, 0x347
         syscall
 l_4:
+        nop
+        nop
         addiu $7, $zero, 0xd00d
+        nop
+        nop
         nop
         nop
         nop

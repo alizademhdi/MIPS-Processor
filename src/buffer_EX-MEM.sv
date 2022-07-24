@@ -12,6 +12,12 @@ module Buffer_EX_MEM(
     set_valid_ex,
     memory_address_type_ex,
     is_word_ex,
+    jump_register_ex,
+    jump_ex,
+    branch_ex,
+    zero_ex,
+    pc_enable_ex,
+    is_nop_ex,
     halted_controller_ex,
     inst_addr_mem,
     register_write_mem,
@@ -26,6 +32,12 @@ module Buffer_EX_MEM(
     set_valid_mem,
     memory_address_type_mem,
     is_word_mem,
+    jump_register_mem,
+    jump_mem,
+    branch_mem,
+    zero_mem,
+    pc_enable_mem,
+    is_nop_mem,
     halted_controller_mem,
     clk,
     rst_b
@@ -48,21 +60,75 @@ module Buffer_EX_MEM(
     input halted_controller_ex;
     input clk;
     input rst_b;
+    input jump_register_ex;
+    input jump_ex;
+    input branch_ex;
+    input zero_ex;
+    input pc_enable_ex;
+    input is_nop_ex;
 
-    output reg [31:0] inst_addr_mem;
-    output reg register_write_mem;
-    output reg [1:0] register_src_mem;
-    output reg [31:0] ALU_result_mem;
-    output reg [31:0] rt_data_mem;
-    output reg [4:0] rd_num_mem;
-    output reg we_cache_mem;
-    output reg we_memory_mem;
-    output reg cache_input_type_mem;
-    output reg set_dirty_mem;
-    output reg set_valid_mem;
-    output reg memory_address_type_mem;
-    output reg is_word_mem;
+    output [31:0] inst_addr_mem;
+    output register_write_mem;
+    output [1:0] register_src_mem;
+    output [31:0] ALU_result_mem;
+    output [31:0] rt_data_mem;
+    output [4:0] rd_num_mem;
+    output we_cache_mem;
+    output we_memory_mem;
+    output cache_input_type_mem;
+    output set_dirty_mem;
+    output set_valid_mem;
+    output memory_address_type_mem;
+    output is_word_mem;
+    output jump_register_mem;
+    output jump_mem;
+    output branch_mem;
+    output zero_mem;
+    output pc_enable_mem;
+    output is_nop_mem;
     output halted_controller_mem;
+
+    dff jump_register(
+        .d(jump_register_ex),
+        .q(jump_register_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff jump(
+        .d(jump_ex),
+        .q(jump_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff branch(
+        .d(branch_ex),
+        .q(branch_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff zero(
+        .d(zero_ex),
+        .q(zero_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff pc_enable(
+        .d(pc_enable_ex),
+        .q(pc_enable_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff is_nop(
+        .d(is_nop_ex),
+        .q(is_nop_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
 
     dff halted(
         .d(halted_controller_ex),

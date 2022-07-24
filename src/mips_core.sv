@@ -36,22 +36,33 @@ module mips_core(
     wire pc_enable_ex;
     wire [31:0] inst_ex;
     wire is_nop_ex;
+    wire [25:0] jea_ex;
+    wire [25:0] jea_if;
+    wire [31:0] rs_data_if;
+    wire branch_if;
+    wire jump_if;
+    wire jump_register_if;
+    wire pc_enable_if;
+    wire [31:0] imm_extend_if;
+    wire is_nop_if;
+    wire zero_if;
+    wire [31:0] imm_extend_ex;
 
     assign inst_if = inst;
 
     IF IF(
         .pc(inst_addr),
         .inst(inst_if),
-        .inst_ex(inst_id),
-        .rs_data(rs_data_ex),
-        .jump_register(jump_register_ex),
-        .jump(jump_ex),
-        .branch(branch_ex),
-        .imm_extend(imm_extend_id),
+        .inst_ex(inst_ex),
+        .rs_data(rs_data_if),
+        .jump_register(jump_register_if),
+        .jump(jump_if),
+        .branch(branch_if),
+        .imm_extend(imm_extend_ex),
         .zero(zero),
-        .pc_enable(pc_enable_ex),
+        .pc_enable(pc_enable_if),
         .halted_controller(halted_controller_if),
-        .is_nop(is_nop_ex),
+        .is_nop(is_nop_if),
         .clk(clk)
     );
 
@@ -163,7 +174,6 @@ module mips_core(
     wire [1:0] register_src_in_ex;
     wire [1:0] register_src_out_ex;
     wire branch_ex;
-    wire [31:0] imm_extend_ex;
     wire cache_input_type_in_ex;
     wire cache_input_type_out_ex;
     wire set_dirty_in_ex;
@@ -177,14 +187,6 @@ module mips_core(
     wire memory_address_type_in_ex;
     wire memory_address_type_out_ex;
     wire halted_controller_in_ex;
-    wire [25:0] jea_ex;
-    wire [25:0] jea_if;
-    wire [31:0] rs_data_if;
-    wire branch_if;
-    wire jump_if;
-    wire jump_register_if;
-    wire pc_enable_if;
-    wire [31:0] imm_extend_if;
 
     Buffer_ID_EX Buffer_ID_EX(
         .inst_addr_id(inst_addr_out_id),
@@ -296,6 +298,8 @@ module mips_core(
         .memory_address_type_out(memory_address_type_out_ex),
         .is_word_in(is_word_in_ex),
         .is_word_out(is_word_out_ex),
+        .is_nop_in(is_nop_ex),
+        .is_nop_out(is_nop_if),
         .inst_addr_in(inst_addr_in_ex),
         .inst_addr_out(inst_addr_out_ex),
         .halted_controller_in(halted_controller_in_ex),
@@ -339,6 +343,12 @@ module mips_core(
         .set_valid_ex(set_valid_out_ex),
         .memory_address_type_ex(memory_address_type_out_ex),
         .is_word_ex(is_word_out_ex),
+        .jump_register_ex(jump_register_ex),
+        .jump_ex(jump_ex),
+        .branch_ex(branch_ex),
+        .zero_ex(zero),
+        .pc_enable_ex(pc_enable_ex),
+        .is_nop_ex(is_nop_ex),
         .inst_addr_mem(inst_addr_in_mem),
         .register_write_mem(register_write_in_mem),
         .register_src_mem(register_src_in_mem),
@@ -352,6 +362,12 @@ module mips_core(
         .set_valid_mem(set_valid_mem),
         .memory_address_type_mem(memory_address_type_mem),
         .is_word_mem(is_word_in_mem),
+        .jump_register_mem(jump_register_if),
+        .jump_mem(jump_if),
+        .branch_mem(branch_if),
+        .zero_mem(zero_if),
+        .pc_enable_mem(pc_enable_if),
+        .is_nop_mem(is_nop_if),
         .halted_controller_ex(halted_controller_out_ex),
         .halted_controller_mem(halted_controller_in_mem),
         .clk(clk),

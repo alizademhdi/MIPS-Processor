@@ -25,6 +25,8 @@ l_3:
 	addiu $7, $zero, 0x1337
         # Should not reach here
 l_4:
+        nop
+        nop
         addiu $7, $zero, 0xd00d
         nop
         nop
