@@ -20,7 +20,7 @@ MEM = $(ASM:%.s=%.mem)
 
 assemble: $(MEM)
 
-INPUT ?= test/default/shifttest
+INPUT ?= test/default/brtest0
 
 obj_dir/Vmips_machine: src/*.sv 323src/*.sv 323src/sim_main.cpp
 	docker run -ti -v ${PWD}:/work												\

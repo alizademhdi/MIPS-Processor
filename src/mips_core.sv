@@ -34,21 +34,24 @@ module mips_core(
     wire jump_register_ex;
     wire jump_ex;
     wire pc_enable_ex;
+    wire [31:0] inst_ex;
+    wire is_nop_ex;
 
     assign inst_if = inst;
 
     IF IF(
         .pc(inst_addr),
         .inst(inst_if),
-        .inst_addr(inst_addr_in_ex),
+        .inst_ex(inst_id),
         .rs_data(rs_data_ex),
         .jump_register(jump_register_ex),
         .jump(jump_ex),
         .branch(branch_ex),
-        .imm_extend(imm_extend_ex),
+        .imm_extend(imm_extend_id),
         .zero(zero),
         .pc_enable(pc_enable_ex),
         .halted_controller(halted_controller_if),
+        .is_nop(is_nop_ex),
         .clk(clk)
     );
 
@@ -97,6 +100,7 @@ module mips_core(
     wire jump_register_id;
     wire pc_enable_id;
     wire [25:0] jea_id;
+    wire is_nop_id;
 
     wire last_stage_halted;
 
@@ -137,6 +141,7 @@ module mips_core(
         .cache_dirty(cache_dirty),
         .inst_addr_in(inst_addr_in_id),
         .inst_addr_out(inst_addr_out_id),
+        .is_nop(is_nop_id),
         .clk(clk),
         .rst_b(rst_b)
     );
@@ -185,6 +190,8 @@ module mips_core(
         .inst_addr_id(inst_addr_out_id),
         .rs_data_id(rs_data_id),
         .rt_data_id(rt_data_id),
+        .inst_id(inst_id),
+        .is_nop_id(is_nop_id),
         .inst_50_id(inst_50_id),
         .inst_2016_id(inst_2016_id),
         .inst_1511_id(inst_1511_id),
@@ -210,6 +217,8 @@ module mips_core(
         .inst_addr_ex(inst_addr_in_ex),
         .rs_data_ex(rs_data_ex),
         .rt_data_ex(rt_data_in_ex),
+        .inst_ex(inst_ex),
+        .is_nop_ex(is_nop_ex),
         .inst_50_ex(inst_50_ex),
         .inst_2016_ex(inst_2016_ex),
         .inst_1511_ex(inst_1511_ex),

@@ -8,6 +8,7 @@ module pc_controller(
     imm_sign_extend,
     zero,
     pc_enable,
+    is_nop,
     clk
 );
     input wire [25:0] jea;
@@ -19,6 +20,7 @@ module pc_controller(
     input wire zero;
     input wire pc_enable;
     input wire clk;
+    input wire is_nop;
 
     output reg [31:0] pc;
 
@@ -35,18 +37,19 @@ module pc_controller(
     wire [31:0] baddr;
     assign baddr = (imm_sign_extend << 2) + pc4;
 
-    always_ff @(posedge clk) begin
+    always @(posedge clk) begin
         if (pc_enable) begin
             if (jump == 1)
-                pc <= jaddr;
-            else if ((branch && zero) == 1)
-                pc <= baddr;
+                pc = jaddr;
+            else if (((branch & zero) & (~is_nop)) == 1)
+                pc = baddr;
             else if (jump_register == 1)
-                pc <= rs_data;
+                pc = rs_data;
             else
-                pc <= pc4;
+                pc = pc4;
         end
     end
+
+    always $display("time: %d, pc_enable: %b, pc: %d, jump: %b, jaddr: %d, jump_register: %b, branch: %b, zero: %b, is_nop: %b, baddr: %d, rs_data: %d", $time, pc_enable, pc, jump, jaddr, jump_register, branch, zero, is_nop, baddr, rs_data);
+
 endmodule
-
-

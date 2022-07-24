@@ -12,7 +12,7 @@ module ALU(
     input wire [4:0] shift_amount;
 
     output reg [31:0] data_out;
-    output reg zero;
+    output zero;
 
 
     parameter XOR_OP = 5'b00000;
@@ -115,9 +115,9 @@ module ALU(
             default: data_out = 0;
         endcase
 
-        zero = (data_out == 0) ? 1 : 0;
     end
 
+    assign zero = (data_out == 0) ? 1 : 0;
     // always $display("time: %d, data1: %d, data2: %d, ALU result: %d", $time, data_in1, data_in2, data_out);
 
 endmodule

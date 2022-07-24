@@ -19,6 +19,7 @@ module Controller(
     cache_hit,
     cache_dirty,
     is_word,
+    is_nop,
     func,
     clk
 );
@@ -46,6 +47,7 @@ module Controller(
     output reg memory_address_type = 0;
     output reg set_dirty = 0;
     output reg is_word = 1;
+    output reg is_nop = 0;
 
 
     reg [3:0] p_state = S0;
@@ -132,9 +134,11 @@ module Controller(
                 ALU_src = 0;
                 register_write = 0;
                 is_unsigned = 0;
+                is_nop = 1;
             end
             Rtype_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b01;
                 jump = 0;
                 branch = 0;
@@ -173,6 +177,7 @@ module Controller(
 
             ADDI_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -187,6 +192,7 @@ module Controller(
 
             ADDIU_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -201,6 +207,7 @@ module Controller(
 
             ANDI_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -215,6 +222,7 @@ module Controller(
 
             XORI_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -229,6 +237,7 @@ module Controller(
 
             ORI_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -243,6 +252,7 @@ module Controller(
 
             LW_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -257,6 +267,7 @@ module Controller(
 
             LB_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -271,6 +282,7 @@ module Controller(
 
             SW_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -285,6 +297,7 @@ module Controller(
 
             SB_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -299,6 +312,7 @@ module Controller(
 
             BEQ_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
@@ -313,6 +327,7 @@ module Controller(
 
             BNE_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
@@ -327,6 +342,7 @@ module Controller(
 
             BLEZ_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
@@ -341,6 +357,7 @@ module Controller(
 
             BGTZ_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
@@ -355,6 +372,7 @@ module Controller(
 
             BGEZ_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 1;
@@ -369,6 +387,7 @@ module Controller(
 
             SLTI_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -383,6 +402,7 @@ module Controller(
 
             LUI_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;
@@ -397,6 +417,7 @@ module Controller(
 
             J_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 1;
                 branch = 0;
@@ -411,6 +432,7 @@ module Controller(
 
             JAL_code:
             begin
+                is_nop = 0;
                 destination_register = 2'b10;
                 jump = 1;
                 branch = 0;
@@ -425,6 +447,7 @@ module Controller(
 
             default:
             begin
+                is_nop = 0;
                 destination_register = 2'b00;
                 jump = 0;
                 branch = 0;

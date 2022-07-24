@@ -25,8 +25,14 @@ l_1:
         ori $0, $0, 0
         ori $0, $0, 0
         addiu $6, $zero, 0x1337
+        nop
+        nop
+        nop
+        nop
 l_2:
         beq $zero, $zero, l_4
+        nop
+        nop
         nop
         nop
         nop

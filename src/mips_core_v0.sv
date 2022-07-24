@@ -56,6 +56,7 @@ module mips_core_v0(
     wire set_dirty;
     wire set_valid;
     wire memory_address_type;
+    wire is_nop;
 
     Controller controller(
         .destination_register(destination_register),
@@ -78,6 +79,7 @@ module mips_core_v0(
         .set_dirty(set_dirty),
         .set_valid(set_valid),
         .is_word(is_word),
+        .is_nop(is_nop),
         .func(inst[5:0]),
         .clk(clk)
     );
@@ -236,6 +238,7 @@ module mips_core_v0(
         .imm_sign_extend(imm_extend),
         .zero(zero),
         .pc_enable(pc_enable),
+        .is_nop(is_nop),
         .clk(clk)
     );
 

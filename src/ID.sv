@@ -35,6 +35,7 @@ module ID(
     cache_dirty,
     inst_addr_in,
     inst_addr_out,
+    is_nop,
     clk,
     rst_b
 );
@@ -79,6 +80,7 @@ module ID(
     output reg is_word;
     output reg halted_controller_out;
     output halted;
+    output is_nop;
 
     assign inst_50 = inst[5:0];
     assign inst_2016 = inst[20:16];
@@ -131,6 +133,7 @@ module ID(
         .set_dirty(set_dirty),
         .set_valid(set_valid),
         .is_word(is_word),
+        .is_nop(is_nop),
         .func(inst[5:0]),
         .clk(clk)
     );

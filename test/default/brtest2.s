@@ -4,7 +4,7 @@
 
 main:
         addiu $v0, $zero, 0xa
-l_0:    
+l_0:
         j l_1
         nop
         nop
@@ -30,6 +30,6 @@ l_4:
         nop
         nop
         syscall
-        
-         
-        
+
+
+
