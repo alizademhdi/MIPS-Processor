@@ -38,7 +38,7 @@ module pc_controller(
     assign baddr = (imm_sign_extend << 2) + pc4;
 
     always @(posedge clk) begin
-        if (pc_enable) begin
+        // if (pc_enable) begin
             if (jump == 1)
                 pc = jaddr;
             else if (((branch && zero) && ~is_nop) == 1)
@@ -47,7 +47,7 @@ module pc_controller(
                 pc = rs_data;
             else
                 pc = pc4;
-        end
+        // end
     end
 
     always $display("time: %d, pc_enable: %b, pc: %d, jump: %b, jaddr: %d, jump_register: %b, branch: %b, zero: %b, is_nop: %b, baddr: %d, rs_data: %d", $time, pc_enable, pc, jump, jaddr, jump_register, branch, zero, is_nop, baddr, rs_data);

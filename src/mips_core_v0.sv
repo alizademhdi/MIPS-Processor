@@ -112,6 +112,7 @@ module mips_core_v0(
         .memory_write_address(memory_write_address),
         .byte_number(byte_number),
         .we_cache(we_cache),
+        .data_in2(),
         .cache_addr(ALU_result),
         .data_in(cache_data_in),
         .set_valid(set_valid),

@@ -95,17 +95,8 @@ module Buffer_MEM_WB(
         .rst_b(rst_b)
     );
 
-    wire temp;
-
     dff #(1) register_write_dff(
         .d(register_write_mem),
-        .q(temp),
-        .clk(clk),
-        .rst_b(rst_b)
-    );
-
-    dff we_dff(
-        .d(temp),
         .q(register_write_wb),
         .clk(clk),
         .rst_b(rst_b)

@@ -47,24 +47,26 @@ module mips_core(
     wire is_nop_if;
     wire zero_if;
     wire [31:0] imm_extend_ex;
+    wire [31:0] imm_extend_mem;
 
     assign inst_if = inst;
 
     IF IF(
         .pc(inst_addr),
         .inst(inst_if),
-        .inst_ex(inst_ex),
+        .inst_ex(inst_mem_in),
         .rs_data(rs_data_if),
         .jump_register(jump_register_if),
         .jump(jump_if),
         .branch(branch_if),
-        .imm_extend(imm_extend_ex),
-        .zero(zero),
+        .imm_extend(imm_extend_mem),
+        .zero(zero_if),
         .pc_enable(pc_enable_if),
         .halted_controller(halted_controller_if),
         .is_nop(is_nop_if),
         .clk(clk)
     );
+
 
     wire [31:0] inst_id;
     wire halted_controller_in_id;
@@ -124,7 +126,7 @@ module mips_core(
         .inst_1511(inst_1511_id),
         .inst_106(inst_106_id),
         .rd_data(rd_data),
-        .rd_num(rd_num_out_wb),
+        .rd_num(rd_num_in_wb),
         .destination_register(destination_register_id),
         .ALU_src(ALU_src_id),
         .ALU_OP(ALU_OP_id),
@@ -137,9 +139,8 @@ module mips_core(
         .branch(branch_id),
         .pc_enable(pc_enable_id),
         .halted(halted),
-        .last_stage_halted(last_stage_halted), // halted from wb stage
+        .last_stage_halted(halted_controller_in_wb), // halted from wb stage
         .halted_controller_in(halted_controller_in_id),
-        .halted_controller_out(halted_controller_out_id),
         .imm_extend(imm_extend_id),
         .cache_input_type(cache_input_type_id),
         .set_dirty(set_dirty_id),
@@ -151,7 +152,6 @@ module mips_core(
         .cache_hit(cache_hit),
         .cache_dirty(cache_dirty),
         .inst_addr_in(inst_addr_in_id),
-        .inst_addr_out(inst_addr_out_id),
         .is_nop(is_nop_id),
         .clk(clk),
         .rst_b(rst_b)
@@ -187,11 +187,15 @@ module mips_core(
     wire memory_address_type_in_ex;
     wire memory_address_type_out_ex;
     wire halted_controller_in_ex;
+    wire [31:0] inst_ex_in;
+    wire [31:0] inst_ex_out;
 
     Buffer_ID_EX Buffer_ID_EX(
-        .inst_addr_id(inst_addr_out_id),
+        .inst_addr_id(inst_addr_in_id),
         .rs_data_id(rs_data_id),
         .rt_data_id(rt_data_id),
+        .inst_id_out(inst_id),
+        .inst_ex_in(inst_ex_in),
         .inst_id(inst_id),
         .is_nop_id(is_nop_id),
         .inst_50_id(inst_50_id),
@@ -243,7 +247,7 @@ module mips_core(
         .set_valid_ex(set_valid_in_ex),
         .memory_address_type_ex(memory_address_type_in_ex),
         .is_word_ex(is_word_in_ex),
-        .halted_controller_id(halted_controller_out_id),
+        .halted_controller_id(halted_controller_in_id),
         .halted_controller_ex(halted_controller_in_ex),
         .clk(clk),
         .rst_b(rst_b)
@@ -255,9 +259,8 @@ module mips_core(
 
     EX EX(
         .rs_data_in(rs_data_ex),
-        .rs_data_out(rs_data_if),
         .rt_data_in(rt_data_in_ex),
-        .rt_data_out(rt_data_out_ex),
+        .inst_ex_in(inst_ex_in),
         .inst_50(inst_50_ex),
         .inst_2016(inst_2016_ex),
         .inst_1511(inst_1511_ex),
@@ -266,46 +269,30 @@ module mips_core(
         .ALU_src(ALU_src_ex),
         .ALU_OP(ALU_OP_ex),
         .register_write_in(register_write_in_ex),
-        .register_write_out(register_write_out_ex),
         .register_src_in(register_src_in_ex),
-        .register_src_out(register_src_out_ex),
         .branch_in(branch_ex),
-        .branch_out(branch_if),
         .jump_in(jump_ex),
-        .jump_out(jump_if),
         .jump_register_in(jump_register_ex),
-        .jump_register_out(jump_register_if),
         .jea_in(jea_ex),
-        .jea_out(jea_if),
         .pc_enable_in(pc_enable_ex),
-        .pc_enable_out(pc_enable_if),
         .zero(zero),
         .imm_extend_in(imm_extend_ex),
-        .imm_extend_out(imm_extend_if),
         .ALU_result(ALU_result_ex),
         .rd_num(rd_num_ex),
         .we_cache_in(we_cache_in_ex),
-        .we_cache_out(we_cache_out_ex),
         .we_memory_in(we_memory_in_ex),
-        .we_memory_out(we_memory_out_ex),
         .cache_input_type_in(cache_input_type_in_ex),
-        .cache_input_type_out(cache_input_type_out_ex),
         .set_dirty_in(set_dirty_in_ex),
-        .set_dirty_out(set_dirty_out_ex),
         .set_valid_in(set_valid_in_ex),
-        .set_valid_out(set_valid_out_ex),
         .memory_address_type_in(memory_address_type_in_ex),
-        .memory_address_type_out(memory_address_type_out_ex),
         .is_word_in(is_word_in_ex),
-        .is_word_out(is_word_out_ex),
         .is_nop_in(is_nop_ex),
-        .is_nop_out(is_nop_if),
         .inst_addr_in(inst_addr_in_ex),
-        .inst_addr_out(inst_addr_out_ex),
         .halted_controller_in(halted_controller_in_ex),
-        .halted_controller_out(halted_controller_out_ex),
         .clk(clk)
     );
+
+    always $display("time: %d, ALU_src_ex: %b", $time, ALU_src_ex);
 
 
     wire [31:0] inst_addr_in_mem;
@@ -329,20 +316,25 @@ module mips_core(
     wire memory_address_type_mem;
     wire halted_controller_in_mem;
 
+    wire [31:0] inst_mem_in;
+    wire [31:0] inst_mem_out;
+
     Buffer_EX_MEM Buffer_EX_MEM(
-        .inst_addr_ex(inst_addr_out_ex),
-        .register_write_ex(register_write_out_ex),
-        .register_src_ex(register_src_out_ex),
+        .inst_addr_ex(inst_addr_in_ex),
+        .inst_ex_out(inst_ex_in),
+        .inst_mem_in(inst_mem_in),
+        .register_write_ex(register_write_in_ex),
+        .register_src_ex(register_src_in_ex),
         .ALU_result_ex(ALU_result_ex),
-        .rt_data_ex(rt_data_out_ex),
+        .rt_data_ex(rt_data_in_ex),
         .rd_num_ex(rd_num_ex),
-        .we_cache_ex(we_cache_out_ex),
-        .we_memory_ex(we_memory_out_ex),
-        .cache_input_type_ex(cache_input_type_out_ex),
-        .set_dirty_ex(set_dirty_out_ex),
-        .set_valid_ex(set_valid_out_ex),
-        .memory_address_type_ex(memory_address_type_out_ex),
-        .is_word_ex(is_word_out_ex),
+        .we_cache_ex(we_cache_in_ex),
+        .we_memory_ex(we_memory_in_ex),
+        .cache_input_type_ex(cache_input_type_in_ex),
+        .set_dirty_ex(set_dirty_in_ex),
+        .set_valid_ex(set_valid_in_ex),
+        .memory_address_type_ex(memory_address_type_in_ex),
+        .is_word_ex(is_word_in_ex),
         .jump_register_ex(jump_register_ex),
         .jump_ex(jump_ex),
         .branch_ex(branch_ex),
@@ -368,8 +360,10 @@ module mips_core(
         .zero_mem(zero_if),
         .pc_enable_mem(pc_enable_if),
         .is_nop_mem(is_nop_if),
-        .halted_controller_ex(halted_controller_out_ex),
+        .halted_controller_ex(halted_controller_in_ex),
         .halted_controller_mem(halted_controller_in_mem),
+        .imm_extend_ex(imm_extend_ex),
+        .imm_extend_mem(imm_extend_mem),
         .clk(clk),
         .rst_b(rst_b)
     );
@@ -379,34 +373,28 @@ module mips_core(
     wire [1:0] byte_number_mem;
 
     MEM MEM(
+        .inst_mem_in(inst_mem_in),
         .register_write_in(register_write_in_mem),
-        .register_write_out(register_write_out_mem),
         .register_src_in(register_src_in_mem),
-        .register_src_out(register_src_out_mem),
         .ALU_result_in(ALU_result_in_mem),
-        .ALU_result_out(ALU_result_out_mem),
         .rd_num_in(rd_num_in_mem),
-        .rd_num_out(rd_num_out_mem),
         .we_cache(we_cache_mem),
-        .we_memory(we_memory_mem),
+        .we_memory(mem_write_en),
         .cache_input_type(cache_input_type_mem),
         .set_dirty(set_dirty_mem),
         .set_valid(set_valid_mem),
         .memory_address_type(memory_address_type_mem),
         .is_word_in(is_word_in_mem),
-        .is_word_out(is_word_out_mem),
         .mem_addr(mem_addr),
         .mem_data_out(mem_data_out),
         .mem_data_in(mem_data_in),
         .cache_hit(cache_hit),
         .cache_dirty(cache_dirty),
         .inst_addr_in(inst_addr_in_mem),
-        .inst_addr_out(inst_addr_out_mem),
         .cache_data_out(cache_data_out_mem),
         .rt_data(rt_data_mem),
         .byte_number(byte_number_mem),
         .halted_controller_in(halted_controller_in_mem),
-        .halted_controller_out(halted_controller_out_mem),
         .clk(clk)
     );
 
@@ -425,14 +413,14 @@ module mips_core(
     wire halted_controller_in_wb;
 
     Buffer_MEM_WB Buffer_MEM_WB(
-        .inst_addr_mem(inst_addr_out_mem),
+        .inst_addr_mem(inst_addr_in_mem),
         .mem_addr_mem(mem_addr_mem),
-        .ALU_result_mem(ALU_result_out_mem),
+        .ALU_result_mem(ALU_result_in_mem),
         .rt_data_mem(rt_data_mem),
-        .rd_num_mem(rd_num_out_mem),
-        .register_src_mem(register_src_out_mem),
-        .register_write_mem(register_write_out_mem),
-        .is_word_mem(is_word_out_mem),
+        .rd_num_mem(rd_num_in_mem),
+        .register_src_mem(register_src_in_mem),
+        .register_write_mem(register_write_in_mem),
+        .is_word_mem(is_word_in_mem),
         .mem_data_in_mem(mem_data_in_mem[0:3]),
         .cache_data_out_mem(cache_data_out_mem[0:3]),
         .byte_number_mem(byte_number_mem),
@@ -446,7 +434,7 @@ module mips_core(
         .mem_data_in_wb(mem_data_in_wb),
         .cache_data_out_wb(cache_data_out_wb),
         .byte_number_wb(byte_number_wb),
-        .halted_controller_mem(halted_controller_out_mem),
+        .halted_controller_mem(halted_controller_in_mem),
         .halted_controller_wb(halted_controller_in_wb),
         .clk(clk),
         .rst_b(rst_b)
@@ -457,14 +445,14 @@ module mips_core(
         .register_src(register_src_wb),
         .rd_data(rd_data),
         .rd_num_in(rd_num_in_wb),
-        .rd_num_out(rd_num_out_wb),
         .is_word(is_word_wb),
         .cache_data_out(cache_data_out_wb),
         .inst_addr(inst_addr_wb),
         .ALU_result(ALU_result_wb),
         .halted_controller(halted_controller_in_wb),
-        .last_stage_halted(last_stage_halted),
         .clk(clk)
     );
+
+    always $display("time: %d, rd_num_wb: %d", $time, rd_num_in_wb);
 
 endmodule

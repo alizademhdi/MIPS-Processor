@@ -58,6 +58,6 @@ module regfile(
 		end
 	end
 
-    always $display("time: %d, t0: %d, v0: %d, we: %b\n", $time, data[8], data[2], rd_we);
+    always $display("time: %d, rd_num: %d, rd_data: %d, t0: %d, v0: %d, we: %b\n", $time, rd_num, rd_data, data[8], data[2], rd_we);
 
 endmodule

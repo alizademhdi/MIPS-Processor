@@ -1,8 +1,12 @@
 module Buffer_EX_MEM(
     inst_addr_ex,
+    inst_ex_out,
+    inst_mem_in,
     register_write_ex,
     register_src_ex,
     ALU_result_ex,
+    imm_extend_ex,
+    imm_extend_mem,
     rt_data_ex,
     rd_num_ex,
     we_cache_ex,
@@ -45,6 +49,7 @@ module Buffer_EX_MEM(
 );
 
     input [31:0] inst_addr_ex;
+    input [31:0] inst_ex_out;
     input register_write_ex;
     input [1:0] register_src_ex;
     input [31:0] ALU_result_ex;
@@ -66,8 +71,10 @@ module Buffer_EX_MEM(
     input zero_ex;
     input pc_enable_ex;
     input is_nop_ex;
+    input [31:0] imm_extend_ex;
 
     output [31:0] inst_addr_mem;
+    output [31:0] inst_mem_in;
     output register_write_mem;
     output [1:0] register_src_mem;
     output [31:0] ALU_result_mem;
@@ -87,6 +94,21 @@ module Buffer_EX_MEM(
     output pc_enable_mem;
     output is_nop_mem;
     output halted_controller_mem;
+    output [31:0] imm_extend_mem;
+
+    dff #(32) imm_extend(
+        .d(imm_extend_ex),
+        .q(imm_extend_mem),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff #(32) inst(
+        .d(inst_ex_out),
+        .q(inst_mem_in),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
 
     dff jump_register(
         .d(jump_register_ex),

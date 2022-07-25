@@ -7,6 +7,8 @@ module Buffer_ID_EX(
     inst_2016_id,
     inst_1511_id,
     inst_106_id,
+    inst_id_out,
+    inst_ex_in,
     destination_register_id,
     ALU_src_id,
     ALU_OP_id,
@@ -61,6 +63,7 @@ module Buffer_ID_EX(
 
     input [31:0] inst_addr_id;
     input [31:0] inst_id;
+    input [31:0] inst_id_out;
     input [31:0] rs_data_id;
     input [31:0] rt_data_id;
     input [5:0] inst_50_id;
@@ -91,6 +94,7 @@ module Buffer_ID_EX(
     input rst_b;
 
     output [31:0] inst_ex;
+    output [31:0] inst_ex_in;
     output reg [31:0] inst_addr_ex;
     output reg [31:0] rs_data_ex;
     output reg [31:0] rt_data_ex;
@@ -138,6 +142,13 @@ module Buffer_ID_EX(
     dff #(32) inst_dff(
         .d(inst_id),
         .q(inst_ex),
+        .clk(clk),
+        .rst_b(rst_b)
+    );
+
+    dff #(32) inst_2_dff(
+        .d(inst_id_out),
+        .q(inst_ex_in),
         .clk(clk),
         .rst_b(rst_b)
     );
@@ -281,6 +292,8 @@ module Buffer_ID_EX(
         .clk(clk),
         .rst_b(rst_b)
     );
+
+    always $display("time: %d, imm_id: %d, imm_ex: %d", $time, imm_extend_id, imm_extend_ex);
 
     dff #(1) cache_input_type_dff(
         .d(cache_input_type_id),

@@ -9,9 +9,9 @@ module dff #(
 
     always @(posedge clk, negedge rst_b) begin
         if (rst_b == 0) begin
-            q = 0;
+            q <= 0;
         end else begin
-            q = d;
+            q <= d;
         end
     end
 

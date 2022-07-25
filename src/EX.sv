@@ -1,58 +1,40 @@
 module EX(
     rs_data_in,
-    rs_data_out,
     rt_data_in,
-    rt_data_out,
     inst_50,
     inst_2016,
     inst_1511,
     inst_106,
+    inst_ex_in,
     destination_register,
     ALU_src,
     ALU_OP,
     register_write_in,
-    register_write_out,
     register_src_in,
-    register_src_out,
     branch_in,
-    branch_out,
     jump_in,
-    jump_out,
     jump_register_in,
-    jump_register_out,
     jea_in,
-    jea_out,
     pc_enable_in,
-    pc_enable_out,
     zero,
     imm_extend_in,
-    imm_extend_out,
     ALU_result,
     rd_num,
     we_cache_in,
-    we_cache_out,
     we_memory_in,
-    we_memory_out,
     cache_input_type_in,
-    cache_input_type_out,
     set_dirty_in,
-    set_dirty_out,
     set_valid_in,
-    set_valid_out,
     memory_address_type_in,
-    memory_address_type_out,
     is_word_in,
-    is_word_out,
     inst_addr_in,
-    inst_addr_out,
     is_nop_in,
-    is_nop_out,
     halted_controller_in,
-    halted_controller_out,
     clk
 );
 
     input [31:0] inst_addr_in;
+    input [31:0] inst_ex_in;
     input [31:0] rs_data_in;
     input [31:0] rt_data_in;
     input [5:0] inst_50;
@@ -81,51 +63,9 @@ module EX(
     input clk;
     input is_nop_in;
 
-    output [31:0] rs_data_out;
-    output [31:0] inst_addr_out;
-    output register_write_out;
-    output [1:0] register_src_out;
     output reg [31:0] ALU_result;
-    output [31:0] rt_data_out;
     output reg [4:0] rd_num;
-    output [31:0] imm_extend_out;
-    output branch_out;
-    output jump_out;
-    output jump_register_out;
-    output [25:0] jea_out;
-    output pc_enable_out;
     output reg zero;
-    output we_cache_out;
-    output we_memory_out;
-    output cache_input_type_out;
-    output set_dirty_out;
-    output set_valid_out;
-    output memory_address_type_out;
-    output halted_controller_out;
-    output is_word_out;
-    output is_nop_out;
-
-    assign rs_data_out = rs_data_in;
-    assign register_write_out = register_write_in;
-    assign register_src_out = register_src_in;
-    assign rt_data_out = rt_data_in;
-    assign imm_extend_out = imm_extend_in;
-    assign branch_out = branch_in;
-    assign jump_out = jump_in;
-    assign jump_register_out = jump_register_in;
-    assign jea_out = jea_in;
-    assign pc_enable_out = pc_enable_in;
-    assign we_cache_out = we_cache_in;
-    assign we_memory_out = we_memory_in;
-    assign cache_input_type_out = cache_input_type_in;
-    assign set_dirty_out = set_dirty_in;
-    assign set_dirty_out = set_valid_in;
-    assign memory_address_type_out = memory_address_type_in;
-    assign is_word_out = is_word_in;
-    assign inst_addr_out = inst_addr_in;
-    assign halted_controller_out = halted_controller_in;
-    assign is_nop_out = is_nop_in;
-
 
     // Create ALU
     reg [31:0] data_in2;
