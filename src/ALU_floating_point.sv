@@ -298,7 +298,7 @@ module floating_point_ALU(
 
                         {dummy, mantissa_output} = ({mantissa_input1[23 : 0],mantissa_output[23 : 0]} / {24'd0, mantissa_input2[23 : 0]});
 
-                        while(mantissa_output[23] != 1)
+                        while(mantissa_output[23] > 1)
                         begin
                             mantissa_output = mantissa_output << 1;
                             exp_output = exp_output - 1;
@@ -308,6 +308,7 @@ module floating_point_ALU(
 
                     end
                 end
+                // data_out = data_in1;
             end
 
             ROUND_F:
@@ -454,5 +455,7 @@ module floating_point_ALU(
             default: data_out = 0;
         endcase
     end
+
+    // always $display("time: %d, data_in1: %h, data_in2: %h, data_out: %h, mantissa_output: %h", $time, data_in1, data_in2, data_out, mantissa_output);
 
 endmodule

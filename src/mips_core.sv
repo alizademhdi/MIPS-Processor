@@ -252,8 +252,8 @@ module mips_core(
         .inst_addr_ex(inst_addr_in_ex),
         .rs_data_ex(rs_data_ex),
         .rt_data_ex(rt_data_in_ex),
-        .frs_data_ex(rs_data_ex),
-        .frt_data_ex(rt_data_ex),
+        .frs_data_ex(frs_data_ex),
+        .frt_data_ex(frt_data_ex),
         .inst_ex(inst_ex),
         .is_nop_ex(is_nop_ex),
         .inst_50_ex(inst_50_ex),
@@ -554,7 +554,7 @@ module mips_core(
         .clk(clk)
     );
 
-    always $display("time: %d, fregister_src_wb: %b, rt_data_wb: %d, fregister_write_wb: %b, rt_num: %d", $time, fregister_src_wb, rt_data_wb, fregister_write_wb, inst_id[20:16]);
+    // always $display("time: %d, fregister_src_wb: %b, rt_data_wb: %h, fregister_write_wb: %b, rt_num: %d\n", $time, fregister_src_wb, rt_data_wb, fregister_write_wb, inst_id[20:16]);
 
     // always $display("time: %d, cache_data_out_wb: %h, register_src_wb: %b, is_word: %b, register_write_wb: %b", $time, cache_data_out_wb, register_src_wb, is_word, register_write_wb);
 

@@ -38,7 +38,7 @@ module regfile(
             for (i = 0; i < size; i++)
                 data[i] <= 0;
         end else begin
-            if (rd_we && (rd_num != 0))
+            if (rd_we)
                 data[rd_num] <= rd_data;
         end
     end
@@ -64,7 +64,7 @@ module regfile(
     end
   end
 
-//   always $display("time: %d, rd_num: %d, rd_data: %d, t0: %d, we: %b", $time, rd_num, rd_data, data[8], rd_we);
+//   always $display("time: %d, %s, rd_num: %d, rd_data: %h, f2: %h, f0: %h, f1: %h, we: %b", $time, print == 1 ? "original" : "floating", rd_num, rd_data, data[2], data[0], data[1], rd_we);
 
 endmodule
 
