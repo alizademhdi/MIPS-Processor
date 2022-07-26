@@ -10,19 +10,9 @@ module mips_core(
     rst_b
 );
 
-    localparam [5:0] RTYPE = 6'b000000, ADDIU = 6'b001001, ADDi = 6'b001000,
-            SYSCALL = 6'b001100, ADD = 6'b100000 , BEQ = 6'b000100,BGTZ = 6'b000111,
-            BNE = 6'b000101 , JUMP = 6'b000010,BLEZ = 6'b000110,BGEZ = 6'b000001,
-            AND = 6'b100100 , OR = 6'b100101, DIV = 6'b011010, MULT = 6'b011000, NOR = 6'b100111,
-            XOR = 6'b100110 , SUB = 6'b100010, ANDi = 6'b001100 ,XORi = 6'b001110,ORi = 6'b001101,
-            SLLV = 6'b000100 , SLL = 6'b000000 , SRL = 6'b000010 , SRLV = 6'b000110, SRA = 6'b000011,
-            SLT = 6'b101010 , SLTi = 6'b001010 , ADDU = 6'b100001, SUBU = 6'b100011 , JR = 6'b001000,
-            JAL = 6'b000011, SW = 6'b101011, LW = 6'b100011, LUi = 6'b001111, LB = 6'b100000, SB = 6'b101000;
-
-
     parameter XLEN = 32;
     input wire [XLEN - 1:0] inst;
-    output wire[XLEN - 1:0] mem_addr, inst_addr; 
+    output wire[XLEN - 1:0] mem_addr, inst_addr;
     wire[XLEN - 1:0] memory_in;
     wire[XLEN - 1:0] memory_out_MEM;
 
@@ -138,6 +128,8 @@ module mips_core(
     wire pc_enable_id;
     wire [25:0] jea_id;
     wire is_nop_id;
+    wire [31:0] frs_data_id;
+    wire [31:0] frt_data_id;
 
     wire last_stage_halted;
 
@@ -173,8 +165,6 @@ module mips_core(
         .we_cache(we_cache_id),
         .we_memory(we_memory_id),
         .is_word(is_word_id),
-        .cache_hit(cache_hit),
-        .cache_dirty(cache_dirty),
         .inst_addr_in(inst_addr_in_id),
         .is_nop(is_nop_id),
         .clk(clk),

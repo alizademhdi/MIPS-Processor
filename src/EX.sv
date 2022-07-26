@@ -79,6 +79,19 @@ module EX(
         .shift_amount(inst_106)
     );
 
+    floating_point_ALU f_alu(
+        .data_out(),
+        .division_by_zero(),
+        .QNaN(),
+        .SNaN(),
+        .inexact(),
+        .underflow(),
+        .overflow(),
+        .data_in1(),
+        .data_in2(),
+        .ALU_OP(ALU_OP)
+    );
+
     always @(ALU_src)
     begin
         if (ALU_src) begin

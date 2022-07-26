@@ -16,16 +16,12 @@ module Controller(
     cache_input_type, // 0 for memory, 1 for else
     memory_address_type, // 0 for alu, 1 for cache
     we_cache,
-    cache_hit,
-    cache_dirty,
     is_word,
     is_nop,
     func,
     clk
 );
 
-    input wire cache_hit;
-    input wire cache_dirty;
     input wire [5:0] opcode;
     input wire [5:0] func;
     input wire clk;
@@ -88,6 +84,12 @@ module Controller(
     parameter ADD_func = 6'b100000;
     parameter JR_func = 6'b001000;
     parameter SRA_func = 6'b000011;
+    parameter ADDs_func = 6'b010011;
+    parameter SUBs_func = 6'b010100;
+    parameter MULs_func = 6'b010101;
+    parameter DIVs_func = 6'b010110;
+    parameter INVRSs_func = 6'b010111;
+    parameter ROUNDs_func = 6'b011100;
 
     //I type
     parameter ADDI_code = 6'b001000;
@@ -110,6 +112,10 @@ module Controller(
     //J type
     parameter J_code = 6'b000010;
     parameter JAL_code = 6'b000011;
+
+    // Coproccesor
+    parameter MTC_code = 6'b110000;
+    parameter MFC_code = 6'b110001;
 
     // NOP
     parameter NOP_code = 6'b111111;
@@ -166,6 +172,12 @@ module Controller(
                     NOR_func: ALU_OP = 5'b01001;
                     AND_func: ALU_OP = 5'b01010;
                     SLT_func: ALU_OP = 5'b01011;
+                    ADDs_func: ALU_OP = 5'b10011;
+                    SUBs_func: ALU_OP = 5'b10100;
+                    MULs_func: ALU_OP = 5'b10101;
+                    DIVs_func: ALU_OP = 5'b10110;
+                    INVRSs_func: ALU_OP = 5'b10111;
+                    ROUNDs_func: ALU_OP = 5'b11000;
                     JR_func:
                     begin
                         ALU_OP = 5'b01100;

@@ -13,6 +13,7 @@ module floating_point_ALU(
     input [31:0] data_in1;
     input [31:0] data_in2;
     input  [4:0] ALU_OP;
+    
     output reg [31:0] data_out;
     output reg division_by_zero,QNaN,SNaN,inexact,underflow,overflow;
 
