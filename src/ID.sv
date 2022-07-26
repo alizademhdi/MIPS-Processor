@@ -1,19 +1,25 @@
 module ID(
     rs_data,
     rt_data,
+    frs_data,
+    frt_data,
     inst,
     inst_50,
     inst_2016,
     inst_1511,
     inst_106,
     rd_data,
+    frd_data,
     rd_num,
     destination_register,
     ALU_src,
     ALU_OP,
     register_write_out,
+    fregister_write_out,
     register_write_in,
+    fregister_write_in,
     register_src,
+    fregister_src,
     jump,
     jump_register,
     jea,
@@ -29,8 +35,6 @@ module ID(
     we_cache,
     we_memory,
     is_word,
-    cache_hit,
-    cache_dirty,
     inst_addr_in,
     is_nop,
     halted,
@@ -41,40 +45,44 @@ module ID(
     input [31:0] inst_addr_in;
     input [31:0] inst;
     input [31:0] rd_data;
+    input [31:0] frd_data;
     input [4:0] rd_num;
     input register_write_in;
-    input cache_hit;
-    input cache_dirty;
+    input fregister_write_in;
     input halted_controller_in;
     input clk;
     input rst_b;
     input last_stage_halted;
 
 
-    output reg [31:0] rs_data;
-    output reg [31:0] rt_data;
+    output [31:0] rs_data;
+    output [31:0] rt_data;
+    output [31:0] frs_data;
+    output [31:0] frt_data;
     output [5:0] inst_50;
     output [4:0] inst_2016;
     output [4:0] inst_1511;
     output [4:0] inst_106;
-    output reg [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
-    output reg ALU_src;
-    output reg [4:0] ALU_OP;
-    output reg we_memory;
-    output reg register_write_out;
-    output reg [1:0] register_src;
-    output reg jump;
-    output reg jump_register;
+    output [1:0] destination_register; // 01 for rd and 00 for rt and 10 for ra
+    output ALU_src;
+    output [4:0] ALU_OP;
+    output we_memory;
+    output register_write_out;
+    output fregister_write_out;
+    output [1:0] register_src;
+    output [1:0] fregister_src;
+    output jump;
+    output jump_register;
     output [25:0] jea;
-    output reg branch;
-    output reg pc_enable;
-    output reg [31:0] imm_extend;
-    output reg cache_input_type;
-    output reg we_cache;
-    output reg set_dirty;
-    output reg set_valid;
-    output reg memory_address_type;
-    output reg is_word;
+    output branch;
+    output pc_enable;
+    output [31:0] imm_extend;
+    output cache_input_type;
+    output we_cache;
+    output set_dirty;
+    output set_valid;
+    output memory_address_type;
+    output is_word;
     output is_nop;
     output halted;
 
@@ -99,6 +107,21 @@ module ID(
         .rd_we(register_write_in),
         .clk(clk),
         .rst_b(rst_b),
+        .print(1'b1),
+        .halted(last_stage_halted)
+    );
+
+    regfile regs_floating_point(
+        .rs_data(frs_data),
+        .rt_data(frt_data),
+        .rs_num(inst[25:21]),
+        .rt_num(inst[20:16]),
+        .rd_num(rd_num),
+        .rd_data(frd_data),
+        .rd_we(fregister_write_in),
+        .clk(clk),
+        .rst_b(rst_b),
+        .print(1'b0),
         .halted(last_stage_halted)
     );
 
@@ -113,17 +136,17 @@ module ID(
         .jump_register(jump_register),
         .we_memory(we_memory),
         .register_src(register_src),
+        .fregister_src(fregister_src),
         .ALU_OP(ALU_OP),
         .ALU_src(ALU_src),
         .register_write(register_write_out),
+        .fregister_write(fregister_write_out),
         .is_unsigned(is_unsigned),
         .pc_enable(pc_enable),
         .opcode(opcode),
         .we_cache(we_cache),
         .cache_input_type(cache_input_type),
         .memory_address_type(memory_address_type),
-        .cache_hit(cache_hit),
-        .cache_dirty(cache_dirty),
         .set_dirty(set_dirty),
         .set_valid(set_valid),
         .is_word(is_word),

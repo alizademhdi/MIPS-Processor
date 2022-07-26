@@ -2,6 +2,10 @@ module Buffer_ID_EX(
     inst_addr_id,
     rs_data_id,
     rt_data_id,
+    frs_data_id,
+    frt_data_id,
+    frs_data_ex,
+    frt_data_ex,
     inst_id,
     inst_50_id,
     inst_2016_id,
@@ -13,8 +17,11 @@ module Buffer_ID_EX(
     ALU_src_id,
     ALU_OP_id,
     we_memory_id,
+    fregister_write_id,
+    fregister_write_ex,
     register_write_id,
     register_src_id,
+    fregister_src_id,
     is_nop_id,
     halted_controller_id,
     branch_id,
@@ -43,6 +50,7 @@ module Buffer_ID_EX(
     we_memory_ex,
     register_write_ex,
     register_src_ex,
+    fregister_src_ex,
     halted_controller_ex,
     branch_ex,
     jump_ex,
@@ -67,6 +75,8 @@ module Buffer_ID_EX(
     input [31:0] inst_id_out;
     input [31:0] rs_data_id;
     input [31:0] rt_data_id;
+    input [31:0] frs_data_id;
+    input [31:0] frt_data_id;
     input [5:0] inst_50_id;
     input [4:0] inst_2016_id;
     input [4:0] inst_1511_id;
@@ -76,7 +86,9 @@ module Buffer_ID_EX(
     input [4:0] ALU_OP_id;
     input we_memory_id;
     input register_write_id;
+    input fregister_write_id;
     input [1:0] register_src_id;
+    input [1:0] fregister_src_id;
     input halted_controller_id;
     input jump_id;
     input jump_register_id;
@@ -100,6 +112,8 @@ module Buffer_ID_EX(
     output reg [31:0] inst_addr_ex;
     output reg [31:0] rs_data_ex;
     output reg [31:0] rt_data_ex;
+    output reg [31:0] frs_data_ex;
+    output reg [31:0] frt_data_ex;
     output reg [5:0] inst_50_ex;
     output reg [4:0] inst_2016_ex;
     output reg [4:0] inst_1511_ex;
@@ -109,7 +123,9 @@ module Buffer_ID_EX(
     output reg [4:0] ALU_OP_ex;
     output reg we_memory_ex;
     output reg register_write_ex;
+    output reg fregister_write_ex;
     output reg [1:0] register_src_ex;
+    output reg [1:0] fregister_src_ex;
     output reg jump_ex;
     output reg jump_register_ex;
     output reg [25:0] jea_ex;
@@ -180,6 +196,23 @@ module Buffer_ID_EX(
         .rst_b(rst_b),
         .lock(lock)
     );
+
+    lock_dff #(32) frs_data_diff(
+        .d(frs_data_id),
+        .q(frs_data_ex),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
+    lock_dff #(32) frt_data_lock_dff(
+        .d(frt_data_id),
+        .q(frt_data_ex),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
 
     lock_dff #(6) inst_50_lock_dff(
         .d(inst_50_id),
@@ -253,9 +286,25 @@ module Buffer_ID_EX(
         .lock(lock)
     );
 
+    lock_dff #(1) fregister_write_lock_dff(
+        .d(fregister_write_id),
+        .q(fregister_write_ex),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
     lock_dff #(2) register_src_lock_dff(
         .d(register_src_id),
         .q(register_src_ex),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
+    lock_dff #(2) fregister_src_lock_dff(
+        .d(fregister_src_id),
+        .q(fregister_src_ex),
         .clk(clk),
         .rst_b(rst_b),
         .lock(lock)

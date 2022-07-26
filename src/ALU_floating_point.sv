@@ -13,6 +13,7 @@ module floating_point_ALU(
     input [31:0] data_in1;
     input [31:0] data_in2;
     input  [4:0] ALU_OP;
+
     output reg [31:0] data_out;
     output reg division_by_zero,QNaN,SNaN,inexact,underflow,overflow;
 
@@ -195,7 +196,7 @@ module floating_point_ALU(
                             begin
                                 if(mantissa_output [23 : 0] == 24'b0)
                                 begin
-                                    sign_res = 0;
+                                    sign_output = 0;
                                     exp_output = 0;
                                     mantissa_output = 0;
                                 end
@@ -207,14 +208,14 @@ module floating_point_ALU(
                                         mantissa_output = mantissa_output << 1;
                                         exp_output = exp_output - 1;
                                     end
-                                    sign_res = 0;
+                                    sign_output = 0;
                                 end
                             end
 
                             else
                             begin
                                 mantissa_output = -mantissa_output;
-                                sign_res = 1;
+                                sign_output = 1;
                                 while(mantissa_output[23] != 1)
                                 begin
                                     mantissa_output = mantissa_output << 1;
@@ -226,7 +227,7 @@ module floating_point_ALU(
                         else
                         begin
                             mantissa_output = mantissa_input1 + mantissa_input2;
-                            sign_res = sign_input1;
+                            sign_output = sign_input1;
                             if(mantissa_output[24])
                             begin
                                 mantissa_output = mantissa_output >> 1;
@@ -242,7 +243,7 @@ module floating_point_ALU(
                             end
 
                         end
-                        data_out = {sign_res,exp_output,mantissa_output[22:0]};
+                        data_out = {sign_output,exp_output,mantissa_output[22:0]};
                     end
 
                 end
@@ -322,12 +323,12 @@ module floating_point_ALU(
 
                     else
                     begin
-                        if(exp1 == 126)
+                        if(exp_input1 == 126)
                         begin
-                            if(mantissa1[23])
-                                result = {sign1, 8'b01111111, 23'b0};
+                            if(mantissa_input1[23])
+                                data_out = {sign_input1, 8'b01111111, 23'b0};
                             else
-                                result = 0;
+                                data_out = 0;
                         end
 
                         else
@@ -401,25 +402,25 @@ module floating_point_ALU(
                 end
             end
 
-            INV:
+            INVRS_F:
             begin
                 sign_input1 = 0;
-                sign_input2 = data_in1n1[31];
+                sign_input2 = data_in1[31];
 
                 exp_input1 = 8'b01111111;
-                exp_input2 = data_in1n1n1[30 : 23];
+                exp_input2 = data_in1[30 : 23];
 
                 mantissa_input1 = 25'd0;
                 mantissa_input2 = {2'b00, data_in1[22 : 0]};
                 mantissa_input1[23] = 1;
                 mantissa_input2[23] = 1;
 
-                if(data_in1n1 == 0)
+                if(data_in1 == 0)
                     division_by_zero = 1;
 
                 else
                 begin
-                    if(data_in1n1 == 0)
+                    if(data_in1 == 0)
                         data_out = 0;
 
                     else

@@ -1,0 +1,10 @@
+LUI t0, 0011111110011001
+ori t0, 1001100110011010
+MTC f0, t0
+LUI t1, 0011111100011001
+ori t1, 1001100110011010
+MTC f1, t1
+div f2,f0,f1
+round f2,f2
+addiu $v0, $zero, 0xa
+syscall
