@@ -297,7 +297,7 @@ module Controller(
             MTC_code:
             begin
                 is_nop = 0;
-                destination_register = 2'b00;
+                destination_register = 2'b01;
                 jump = 0;
                 branch = 0;
                 jump_register = 0;

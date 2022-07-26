@@ -128,7 +128,6 @@ module EX(
                 default:
                     rd_num = inst_2016;
             endcase
-
         end
 endmodule
 
