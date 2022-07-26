@@ -48,6 +48,7 @@ l_3:
 l_4:
         nop
         nop
+        nop
         addiu $7, $zero, 0xd00d
         nop
         nop

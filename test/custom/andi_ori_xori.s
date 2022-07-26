@@ -2,6 +2,9 @@
 main:   
 	
 	addi $s0,$zero,2793
+	nop
+	nop
+	nop
 	andi $s1,$s0,1151
 	
 	addi $s2,$zero,2793
@@ -11,6 +14,9 @@ main:
 	xori $s5,$s0,1151
 	    
 	addi $v0,$zero,10
+	nop
+	nop
+	nop
 	syscall
 	
 

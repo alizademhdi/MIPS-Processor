@@ -19,10 +19,8 @@ module ID(
     jea,
     branch,
     pc_enable,
-    halted,
     last_stage_halted,
     halted_controller_in,
-    halted_controller_out,
     imm_extend,
     cache_input_type,
     set_dirty,
@@ -34,8 +32,8 @@ module ID(
     cache_hit,
     cache_dirty,
     inst_addr_in,
-    inst_addr_out,
     is_nop,
+    halted,
     clk,
     rst_b
 );
@@ -53,7 +51,6 @@ module ID(
     input last_stage_halted;
 
 
-    output [31:0] inst_addr_out;
     output reg [31:0] rs_data;
     output reg [31:0] rt_data;
     output [5:0] inst_50;
@@ -78,16 +75,13 @@ module ID(
     output reg set_valid;
     output reg memory_address_type;
     output reg is_word;
-    output reg halted_controller_out;
-    output halted;
     output is_nop;
+    output halted;
 
     assign inst_50 = inst[5:0];
     assign inst_2016 = inst[20:16];
     assign inst_1511 = inst[15:11];
     assign inst_106 = inst[10:6];
-    assign inst_addr_out = inst_addr_in;
-    assign halted_controller_out = halted_controller_in;
     assign halted = last_stage_halted;
     assign jea = inst[25:0];
 
@@ -105,7 +99,7 @@ module ID(
         .rd_we(register_write_in),
         .clk(clk),
         .rst_b(rst_b),
-        .halted(halted)
+        .halted(last_stage_halted)
     );
 
 

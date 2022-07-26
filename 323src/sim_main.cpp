@@ -31,7 +31,7 @@ public:
     void iterate() {
         context->timeInc(1);
         top->clk = !top->clk;
-        top->eval(); 
+        top->eval();
     }
 
     bool notFinished() {

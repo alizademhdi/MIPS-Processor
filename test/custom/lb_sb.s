@@ -25,5 +25,8 @@ main:
 
         #;;  Quit out 
         addiu $v0, $zero, 0xa
+        nop
+	nop
+	nop
         syscall
         

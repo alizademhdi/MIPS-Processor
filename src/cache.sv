@@ -89,4 +89,19 @@ module Cache (
             dirty_array[block_addr] <= 1'b0;
     end
 
+    // always $display("time: %d, we_cache: %b, cache_addr: %h, data_in: %h", $time, we_cache, cache_addr, data_in);
+
+    integer i, j;
+
+    // always @(*) begin
+    //     for (j = 0; j < size; j = j + 1) begin
+    //         $display("tag: %b, valid: %b, dirty: %b, word: %h",
+    //             tag_array[j],
+    //             valid_array[j],
+    //             dirty_array[j],
+    //             cache[j]
+    //         );
+    //     end
+    // end
+
 endmodule

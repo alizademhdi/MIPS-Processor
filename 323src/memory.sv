@@ -50,6 +50,8 @@ module memory(
         end
     end
 
+    // always $display("time: %d ------------------- addr: %h, we: %b, mem[10000000]: %h", $time, addr, we, mem[(32'h10000000 & 32'hfffffffc) + 0]);
+
     // always @(posedge clk) $display("%h", {
     //     mem[(32'h10020100 & 32'hfffffffc) + 3],
     //     mem[(32'h10020100 & 32'hfffffffc) + 2],
