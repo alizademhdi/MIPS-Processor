@@ -11,6 +11,7 @@ module regfile(
     print,
     halted
 );
+
     parameter XLEN=32, size=32;
 
     output [XLEN-1:0] rs_data;
@@ -63,7 +64,7 @@ module regfile(
     end
   end
 
-  // always $display("time: %d, rd_num: %d, rd_data: %d, ra: %d, we: %b", $time, rd_num, rd_data, data[5'b11111], rd_we);
+//   always $display("time: %d, rd_num: %d, rd_data: %d, t0: %d, we: %b", $time, rd_num, rd_data, data[8], rd_we);
 
 endmodule
 

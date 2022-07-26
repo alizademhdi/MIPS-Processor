@@ -159,27 +159,90 @@ module Controller(
                 ALU_src = 0;
                 register_src = 2'b00;
                 fregister_src = 2'b00;
-                register_write = 1;
-                fregister_write = 0;
                 is_unsigned = 0;
 
                 case (func)
-                    XOR_func: ALU_OP = 5'b00000;
-                    SLL_func: ALU_OP = 5'b00001;
-                    SLLV_func: ALU_OP = 5'b11001;
-                    SRL_func: ALU_OP = 5'b00010;
-                    SRLV_func: ALU_OP = 5'b11010;
-                    SRA_func: ALU_OP = 5'b00011;
-                    ADD_func: ALU_OP= 5'b00100;
-                    ADDU_func: ALU_OP= 5'b00100;
-                    SUB_func: ALU_OP = 5'b00101;
-                    SUBU_func: ALU_OP = 5'b00101;
-                    MULT_func: ALU_OP = 5'b00110;
-                    DIV_func: ALU_OP = 5'b00111;
-                    OR_func: ALU_OP = 5'b01000;
-                    NOR_func: ALU_OP = 5'b01001;
-                    AND_func: ALU_OP = 5'b01010;
-                    SLT_func: ALU_OP = 5'b01011;
+                    XOR_func:
+                    begin
+                        ALU_OP = 5'b00000;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SLL_func: begin
+                        ALU_OP = 5'b00001;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SLLV_func: begin
+                        ALU_OP = 5'b11001;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SRL_func: begin
+                        ALU_OP = 5'b00010;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SRLV_func: begin
+                        ALU_OP = 5'b11010;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SRA_func: begin
+                         ALU_OP = 5'b00011;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    ADD_func: begin
+                         ALU_OP= 5'b00100;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    ADDU_func: begin
+                        ALU_OP= 5'b00100;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SUB_func: begin
+                        ALU_OP = 5'b00101;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SUBU_func: begin
+                        ALU_OP = 5'b00101;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    MULT_func: begin
+                        ALU_OP = 5'b00110;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    DIV_func: begin
+                        ALU_OP = 5'b00111;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    OR_func: begin
+                        ALU_OP = 5'b01000;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    NOR_func: begin
+                        ALU_OP = 5'b01001;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    AND_func: begin
+                        ALU_OP = 5'b01010;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
+                    SLT_func: begin
+                        ALU_OP = 5'b01011;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
                     ADDs_func:
                     begin
                         ALU_OP = 5'b10011;
@@ -220,8 +283,14 @@ module Controller(
                     begin
                         ALU_OP = 5'b01100;
                         jump_register = 1;
+                        register_write = 1;
+                        fregister_write = 0;
                     end
-                    default: ALU_OP = 5'b00100;
+                    default: begin
+                        ALU_OP = 5'b00100;
+                        register_write = 1;
+                        fregister_write = 0;
+                    end
                 endcase
             end
 

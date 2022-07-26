@@ -63,7 +63,7 @@ module WB(
 
             case (fregister_src_wb)
                 2'b00: frd_data = fALU_result_wb;
-                2'b01: frd_data = rs_data_wb;
+                2'b01: frd_data = rt_data_wb;
                 2'b10: // memory
                 begin
                     if(is_word)
