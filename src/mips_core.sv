@@ -10,22 +10,37 @@ module mips_core(
     rst_b
 );
 
+    localparam [5:0] RTYPE = 6'b000000, ADDIU = 6'b001001, ADDi = 6'b001000,
+            SYSCALL = 6'b001100, ADD = 6'b100000 , BEQ = 6'b000100,BGTZ = 6'b000111,
+            BNE = 6'b000101 , JUMP = 6'b000010,BLEZ = 6'b000110,BGEZ = 6'b000001,
+            AND = 6'b100100 , OR = 6'b100101, DIV = 6'b011010, MULT = 6'b011000, NOR = 6'b100111,
+            XOR = 6'b100110 , SUB = 6'b100010, ANDi = 6'b001100 ,XORi = 6'b001110,ORi = 6'b001101,
+            SLLV = 6'b000100 , SLL = 6'b000000 , SRL = 6'b000010 , SRLV = 6'b000110, SRA = 6'b000011,
+            SLT = 6'b101010 , SLTi = 6'b001010 , ADDU = 6'b100001, SUBU = 6'b100011 , JR = 6'b001000,
+            JAL = 6'b000011, SW = 6'b101011, LW = 6'b100011, LUi = 6'b001111, LB = 6'b100000, SB = 6'b101000;
 
-    input [31:0] inst;
+
+    parameter XLEN = 32;
+    input wire [XLEN - 1:0] inst;
+    output wire[XLEN - 1:0] mem_addr, inst_addr; 
+    wire[XLEN - 1:0] memory_in;
+    wire[XLEN - 1:0] memory_out_MEM;
+
+    input [XLEN -1 : 0] inst;
     input [7:0] mem_data_out[0:3];
     input clk;
     input rst_b;
 
-    output [31:0] inst_addr;
-    output reg [31:0] mem_addr;
+    output [XLEN -1 : 0] inst_addr;
+    output reg [XLEN -1 : 0] mem_addr;
     output [7:0]  mem_data_in[0:3];
     output mem_write_en;
     output halted;
 
     wire [31:0] inst_if;
-    wire [31:0] rs_data_id;
-    wire [31:0] rs_data_ex;
-    wire [31:0] rt_data_id;
+    wire [XLEN -1 : 0] rs_data_id;
+    wire [XLEN -1 : 0] rs_data_ex;
+    wire [XLEN -1 : 0] rt_data_id;
     wire jump_register;
     wire jump;
     wire halted_controller_if;
@@ -50,6 +65,10 @@ module mips_core(
     wire [31:0] imm_extend_mem;
     wire register_write_wb_cache;
     wire lock;
+
+    //new
+    wire float_reg_write_enable_EX, float_reg_write_enable_MEM;
+    wire regfile_mux_EX, regfile_mux_MEM;
 
     assign inst_if = inst;
 
@@ -195,6 +214,37 @@ module mips_core(
     wire [31:0] inst_ex_in;
     wire [31:0] inst_ex_out;
 
+    //new
+    Mux unsigned_mux(.select(is_unsigned_ID),.in0(sign_extended_first16bit_inst),.in1({{(XLEN/2){1'b0}},inst_ID[15:0]}),.out(immediate_data_ID));
+    Mux #(5) write_reg_file_mux(.select(reg_dest_ID),.in0(inst_ID[20:16]),.in1(inst_ID[15:11]),.out(write_reg_num_inst));
+    Mux #(5) write_reg_if_jal_mux(.select(pc_or_mem_ID),.in0(write_reg_num_inst),.in1(5'd31),.out(rd_num_ID));
+
+    regfile RegisterFile(
+        .rs_data(rs_data_ID),               // rs_data
+        .rt_data(rt_data_ID),               // rt_data
+        .rs_num(inst_ID[25:21]),            // rs_num
+        .rt_num(inst_ID[20:16]),            // rt_num
+        .rd_num(rd_num_WB),                 // rd_num
+        .rd_data(rd_data),                  // rd_data
+        .rd_we(reg_write_enable_WB),        // rd_we
+        .clk(clk),                          // clk
+        .rst_b(rst_b),                      // rst_b
+        .halted(halted)                     // halted
+    );
+
+    regfile RegisterFile_Float(
+            .rs_data(fs_data_ID),               // rs_data
+            .rt_data(ft_data_ID),               // rt_data
+            .rs_num(inst_ID[25:21]),            // rs_num
+            .rt_num(inst_ID[20:16]),            // rt_num
+            .rd_num(rd_num_WB),                 // rd_num
+            .rd_data(fd_data),                  // rd_data
+            .rd_we(float_reg_write_enable_WB),  // rd_we
+            .clk(clk),                          // clk
+            .rst_b(rst_b),                      // rst_b
+            .halted(halted)                     // halted
+    );
+
     Buffer_ID_EX Buffer_ID_EX(
         .inst_addr_id(inst_addr_in_id),
         .rs_data_id(rs_data_id),
@@ -323,6 +373,10 @@ module mips_core(
     wire [31:0] inst_mem_out;
     wire temp;
 
+    //new
+    Mux alu_input2_mux(.select(alu_src_EX),.in0(rt_data_EX),.in1(immediate_data_EX),.out(alu_second_source));
+    Mux select_shift_amount_mux(.select(does_shift_amount_need_EX),.in0(rs_data_EX),.in1(shift_amount_32bit_EX),.out(alu_first_source));
+
     Buffer_EX_MEM Buffer_EX_MEM(
         .inst_addr_ex(inst_addr_in_ex),
         .inst_ex_out(inst_ex_in),
@@ -425,6 +479,11 @@ module mips_core(
     wire [1:0] byte_number_wb;
     wire halted_controller_in_wb;
 
+    //new
+    Mux mux_if_branch(.select(branch_MEM),.in0(pc_incremented_IF),.in1(pc_branch_value_MEM),.out(pc_value_after_branch));
+    Mux mux_if_jump(.select(jump_MEM),.in0(pc_value_after_branch),.in1(pc_jump_address_MEM),.out(pc_after_j_or_branch));
+    Mux mux_jump_register(.select(jump_register_MEM),.in0(pc_after_j_or_branch),.in1(rs_data_MEM),.out(pc_input));
+
     Buffer_MEM_WB Buffer_MEM_WB(
         .inst_addr_mem(inst_addr_in_mem),
         .mem_addr_mem(mem_addr_mem),
@@ -468,6 +527,12 @@ module mips_core(
         .halted_controller(halted_controller_in_wb),
         .clk(clk)
     );
+
+    //new
+    Mux mem_or_alu_result_mux(.select(mem_or_reg_WB),.in0(alu_result_WB),.in1(memory_out_WB),.out(mem_or_alu_write_data));
+    Mux memoralu_or_pc_incremented_mux(.select(pc_or_mem_WB),.in0(mem_or_alu_write_data),.in1(pc_incremented_WB),.out(memoralu_or_pc_incremented_mux_out));
+    Mux fp_reg_mux(.select(fp_regfile_mux_WB),.in1(rt_data_WB),.in0(fp_alu_result_WB),.out(fd_data));
+    Mux reg_mux(.select(regfile_mux_WB),.in0(memoralu_or_pc_incremented_mux_out),.in1(fs_data_WB),.out(rd_data));
 
     // always $display("time: %d, cache_data_out_wb: %h, register_src_wb: %b, is_word: %b, register_write_wb: %b", $time, cache_data_out_wb, register_src_wb, is_word, register_write_wb);
 

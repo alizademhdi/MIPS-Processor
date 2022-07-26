@@ -10,7 +10,7 @@ module regfile(
     rst_b,
     halted
 );
-    parameter XLEN=32, size=32;
+    parameter XLEN=32, size=32 ,CAN_PRINT = 1'b1;
 
     output [XLEN-1:0] rs_data;
     output [XLEN-1:0] rt_data;
@@ -39,25 +39,29 @@ module regfile(
         end
     end
 
-	always @(halted) begin
+  always @(halted) begin
         integer fd = 0;
         integer i = 0;
-		if (rst_b && (halted)) begin
-			fd = $fopen("output/regdump.reg");
+    if (rst_b && (halted)) begin
+            if (CAN_PRINT) begin
+                fd = $fopen("output/regdump.reg");
 
-			$display("=== Simulation Cycle %0d ===", $time/2);
-			$display("*** RegisterFile dump ***");
-			$fdisplay(fd, "*** RegisterFile dump ***");
+                $display("=== Simulation Cycle %0d ===", $time/2);
+                $display("*** RegisterFile dump ***");
+                $fdisplay(fd, "*** RegisterFile dump ***");
+                
+                for(i = 0; i < size; i = i+1) begin
+                    $display("r%2d = 0x%8x", i, data[i]);
+                    $fdisplay(fd, "r%2d = 0x%8h", i, data[i]); 
+                end
+                
+                $fclose(fd);
+            end
+    end
+  end
 
-			for(i = 0; i < size; i = i+1) begin
-				$display("r%2d = 0x%8x", i, data[i]);
-				$fdisplay(fd, "r%2d = 0x%8h", i, data[i]);
-			end
-
-			$fclose(fd);
-		end
-	end
-
-    // always $display("time: %d, rd_num: %d, rd_data: %d, ra: %d, we: %b", $time, rd_num, rd_data, data[5'b11111], rd_we);
-
+  // always $display("time: %d, rd_num: %d, rd_data: %d, ra: %d, we: %b", $time, rd_num, rd_data, data[5'b11111], rd_we);
+    
 endmodule
+
+
