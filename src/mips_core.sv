@@ -72,10 +72,13 @@ module mips_core(
 
     wire [31:0] inst_id;
     wire halted_controller_in_id;
+    wire [31:0] inst_addr_in_id;
 
     Buffer_IF_ID Buffer_IF_ID(
         .halted_controller_if(halted_controller_if),
         .halted_controller_id(halted_controller_in_id),
+        .inst_addr_if(inst_addr),
+        .inst_addr_id(inst_addr_in_id),
         .inst_if(inst_if),
         .inst_id(inst_id),
         .clk(clk),
@@ -106,7 +109,6 @@ module mips_core(
     wire cache_dirty;
     wire we_memory_id;
     wire is_word_id;
-    wire [31:0] inst_addr_in_id;
     wire [31:0] inst_addr_out_id;
     wire [31:0] inst_addr_in_ex;
     wire [31:0] inst_addr_out_ex;
@@ -328,6 +330,8 @@ module mips_core(
         .register_write_ex(register_write_in_ex),
         .register_src_ex(register_src_in_ex),
         .ALU_result_ex(ALU_result_ex),
+        .rs_data_ex(rs_data_ex),
+        .rs_data_mem(rs_data_if),
         .rt_data_ex(rt_data_in_ex),
         .rd_num_ex(rd_num_ex),
         .we_cache_ex(we_cache_in_ex),
@@ -465,6 +469,6 @@ module mips_core(
         .clk(clk)
     );
 
-    always $display("time: %d, cache_data_out_wb: %h, register_src_wb: %b, is_word: %b, register_write_wb: %b", $time, cache_data_out_wb, register_src_wb, is_word, register_write_wb);
+    // always $display("time: %d, cache_data_out_wb: %h, register_src_wb: %b, is_word: %b, register_write_wb: %b", $time, cache_data_out_wb, register_src_wb, is_word, register_write_wb);
 
 endmodule

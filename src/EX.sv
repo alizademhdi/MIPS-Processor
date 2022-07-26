@@ -100,7 +100,5 @@ module EX(
 
         end
 
-    // initial $monitor("reg_we: %b", register_write_in);
-
 endmodule
 

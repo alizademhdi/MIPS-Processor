@@ -125,8 +125,6 @@ module Buffer_ID_EX(
     output is_nop_ex;
     output halted_controller_ex;
 
-    // initial $monitor("reg_we: %b", register_write_id);
-
     lock_dff halted(
         .d(halted_controller_id),
         .q(halted_controller_ex),

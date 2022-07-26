@@ -89,7 +89,7 @@ module Cache (
             dirty_array[block_addr] <= 1'b0;
     end
 
-    always $display("time: %d, we_cache: %b, cache_addr: %h, data_in: %h", $time, we_cache, cache_addr, data_in);
+    // always $display("time: %d, we_cache: %b, cache_addr: %h, data_in: %h", $time, we_cache, cache_addr, data_in);
 
     integer i, j;
 

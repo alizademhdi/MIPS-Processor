@@ -7,6 +7,8 @@ module Buffer_EX_MEM(
     ALU_result_ex,
     imm_extend_ex,
     imm_extend_mem,
+    rs_data_ex,
+    rs_data_mem,
     rt_data_ex,
     rd_num_ex,
     we_cache_ex,
@@ -53,6 +55,7 @@ module Buffer_EX_MEM(
     input register_write_ex;
     input [1:0] register_src_ex;
     input [31:0] ALU_result_ex;
+    input [31:0] rs_data_ex;
     input [31:0] rt_data_ex;
     input [4:0] rd_num_ex;
     input we_cache_ex;
@@ -79,6 +82,7 @@ module Buffer_EX_MEM(
     output register_write_mem;
     output [1:0] register_src_mem;
     output [31:0] ALU_result_mem;
+    output [31:0] rs_data_mem;
     output [31:0] rt_data_mem;
     output [4:0] rd_num_mem;
     output we_cache_mem;
@@ -204,6 +208,14 @@ module Buffer_EX_MEM(
     lock_dff #(32) rt_data_lock_dff(
         .d(rt_data_ex),
         .q(rt_data_mem),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
+    lock_dff #(32) rs_data_lock_dff(
+        .d(rs_data_ex),
+        .q(rs_data_mem),
         .clk(clk),
         .rst_b(rst_b),
         .lock(lock)
