@@ -3,14 +3,23 @@ module Buffer_EX_MEM(
     inst_ex_out,
     inst_mem_in,
     register_write_ex,
+    fregister_write_ex,
+    fregister_write_mem,
     register_src_ex,
+    fregister_src_ex,
     ALU_result_ex,
+    fALU_result_ex,
+    fALU_result_mem,
     imm_extend_ex,
     imm_extend_mem,
     rs_data_ex,
     rs_data_mem,
     rt_data_ex,
     rd_num_ex,
+    frs_data_ex,
+    frt_data_ex,
+    frs_data_mem,
+    frt_data_mem,
     we_cache_ex,
     we_memory_ex,
     cache_input_type_ex,
@@ -28,6 +37,7 @@ module Buffer_EX_MEM(
     inst_addr_mem,
     register_write_mem,
     register_src_mem,
+    fregister_src_mem,
     ALU_result_mem,
     rt_data_mem,
     rd_num_mem,
@@ -53,10 +63,15 @@ module Buffer_EX_MEM(
     input [31:0] inst_addr_ex;
     input [31:0] inst_ex_out;
     input register_write_ex;
+    input fregister_write_ex;
     input [1:0] register_src_ex;
+    input [1:0] fregister_src_ex;
     input [31:0] ALU_result_ex;
+    input [31:0] fALU_result_ex;
     input [31:0] rs_data_ex;
     input [31:0] rt_data_ex;
+    input [31:0] frs_data_ex;
+    input [31:0] frt_data_ex;
     input [4:0] rd_num_ex;
     input we_cache_ex;
     input we_memory_ex;
@@ -80,10 +95,15 @@ module Buffer_EX_MEM(
     output [31:0] inst_addr_mem;
     output [31:0] inst_mem_in;
     output register_write_mem;
+    output fregister_write_mem;
     output [1:0] register_src_mem;
+    output [1:0] fregister_src_mem;
     output [31:0] ALU_result_mem;
+    output [31:0] fALU_result_mem;
     output [31:0] rs_data_mem;
     output [31:0] rt_data_mem;
+    output [31:0] frs_data_mem;
+    output [31:0] frt_data_mem;
     output [4:0] rd_num_mem;
     output we_cache_mem;
     output we_memory_mem;
@@ -189,6 +209,14 @@ module Buffer_EX_MEM(
         .lock(lock)
     );
 
+    lock_dff #(1) fregister_write_lock_dff(
+        .d(fregister_write_ex),
+        .q(fregister_write_mem),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
     lock_dff #(2) register_src_lock_dff(
         .d(register_src_ex),
         .q(register_src_mem),
@@ -197,9 +225,25 @@ module Buffer_EX_MEM(
         .lock(lock)
     );
 
+    lock_dff #(2) fregister_src_lock_dff(
+        .d(fregister_src_ex),
+        .q(fregister_src_mem),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
     lock_dff #(32) ALU_result_lock_dff(
         .d(ALU_result_ex),
         .q(ALU_result_mem),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
+    lock_dff #(32) fALU_result_lock_dff(
+        .d(fALU_result_ex),
+        .q(fALU_result_mem),
         .clk(clk),
         .rst_b(rst_b),
         .lock(lock)
@@ -216,6 +260,22 @@ module Buffer_EX_MEM(
     lock_dff #(32) rs_data_lock_dff(
         .d(rs_data_ex),
         .q(rs_data_mem),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
+    lock_dff #(32) frt_data_lock_dff(
+        .d(frt_data_ex),
+        .q(frt_data_mem),
+        .clk(clk),
+        .rst_b(rst_b),
+        .lock(lock)
+    );
+
+    lock_dff #(32) frs_data_lock_dff(
+        .d(frs_data_ex),
+        .q(frs_data_mem),
         .clk(clk),
         .rst_b(rst_b),
         .lock(lock)

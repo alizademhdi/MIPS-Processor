@@ -19,6 +19,7 @@ module ID(
     register_write_in,
     fregister_write_in,
     register_src,
+    fregister_src,
     jump,
     jump_register,
     jea,
@@ -34,8 +35,6 @@ module ID(
     we_cache,
     we_memory,
     is_word,
-    cache_hit,
-    cache_dirty,
     inst_addr_in,
     is_nop,
     halted,
@@ -50,8 +49,6 @@ module ID(
     input [4:0] rd_num;
     input register_write_in;
     input fregister_write_in;
-    input cache_hit;
-    input cache_dirty;
     input halted_controller_in;
     input clk;
     input rst_b;
@@ -73,6 +70,7 @@ module ID(
     output register_write_out;
     output fregister_write_out;
     output [1:0] register_src;
+    output [1:0] fregister_src;
     output jump;
     output jump_register;
     output [25:0] jea;
@@ -138,9 +136,11 @@ module ID(
         .jump_register(jump_register),
         .we_memory(we_memory),
         .register_src(register_src),
+        .fregister_src(fregister_src),
         .ALU_OP(ALU_OP),
         .ALU_src(ALU_src),
         .register_write(register_write_out),
+        .fregister_write(fregister_write_out),
         .is_unsigned(is_unsigned),
         .pc_enable(pc_enable),
         .opcode(opcode),

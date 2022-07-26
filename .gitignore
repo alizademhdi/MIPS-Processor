@@ -1,3 +1,4 @@
 /obj_dir
 .DS_Store
 .vscode/
+*.txt

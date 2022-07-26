@@ -1,6 +1,14 @@
 module EX(
     rs_data_in,
     rt_data_in,
+    frs_data_ex,
+    frt_data_ex,
+    division_by_zero,
+    QNaN,
+    SNaN,
+    inexact,
+    underflow,
+    overflow,
     inst_50,
     inst_2016,
     inst_1511,
@@ -19,6 +27,7 @@ module EX(
     zero,
     imm_extend_in,
     ALU_result,
+    fALU_result,
     rd_num,
     we_cache_in,
     we_memory_in,
@@ -37,6 +46,8 @@ module EX(
     input [31:0] inst_ex_in;
     input [31:0] rs_data_in;
     input [31:0] rt_data_in;
+    input [31:0] frs_data_ex;
+    input [31:0] frt_data_ex;
     input [5:0] inst_50;
     input [4:0] inst_2016;
     input [4:0] inst_1511;
@@ -64,8 +75,15 @@ module EX(
     input is_nop_in;
 
     output reg [31:0] ALU_result;
+    output reg [31:0] fALU_result;
     output reg [4:0] rd_num;
     output reg zero;
+    output division_by_zero;
+    output QNaN;
+    output SNaN;
+    output inexact;
+    output underflow;
+    output overflow;
 
     // Create ALU
     reg [31:0] data_in2;
@@ -80,15 +98,15 @@ module EX(
     );
 
     floating_point_ALU f_alu(
-        .data_out(),
-        .division_by_zero(),
-        .QNaN(),
-        .SNaN(),
-        .inexact(),
-        .underflow(),
-        .overflow(),
-        .data_in1(),
-        .data_in2(),
+        .data_out(fALU_result),
+        .division_by_zero(division_by_zero),
+        .QNaN(QNaN),
+        .SNaN(SNaN),
+        .inexact(inexact),
+        .underflow(underflow),
+        .overflow(overflow),
+        .data_in1(frs_data_ex),
+        .data_in2(frt_data_ex),
         .ALU_OP(ALU_OP)
     );
 
@@ -112,6 +130,5 @@ module EX(
             endcase
 
         end
-
 endmodule
 

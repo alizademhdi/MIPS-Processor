@@ -5,9 +5,11 @@ module Controller(
     jump_register,
     we_memory,
     register_src,
+    fregister_src,
     ALU_OP,
     ALU_src,
     register_write,
+    fregister_write,
     is_unsigned,
     pc_enable,
     set_valid,
@@ -32,6 +34,7 @@ module Controller(
     output reg jump_register;
     output reg we_memory;
     output reg [1:0] register_src; // 01 for memory and 00 for ALU result and 10 for PC
+    output reg [1:0] fregister_src; // 01 for memory and 00 for ALU result and 10 for PC
     output reg [4:0] ALU_OP;
     output reg ALU_src;
     output reg register_write;
@@ -44,6 +47,7 @@ module Controller(
     output reg set_dirty = 0;
     output reg is_word = 1;
     output reg is_nop = 0;
+    output reg fregister_write;
 
 
     reg [3:0] p_state = S0;
@@ -136,9 +140,11 @@ module Controller(
                 we_memory = 0;
                 destination_register = 2'b00;
                 register_src = 0; // 01 for memory and 00 for ALU result and 10 for PC
+                fregister_src = 2'b00;
                 ALU_OP = 0;
                 ALU_src = 0;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
                 is_nop = 1;
             end
@@ -152,7 +158,9 @@ module Controller(
                 we_memory = 0;
                 ALU_src = 0;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 0;
 
                 case (func)
@@ -172,12 +180,42 @@ module Controller(
                     NOR_func: ALU_OP = 5'b01001;
                     AND_func: ALU_OP = 5'b01010;
                     SLT_func: ALU_OP = 5'b01011;
-                    ADDs_func: ALU_OP = 5'b10011;
-                    SUBs_func: ALU_OP = 5'b10100;
-                    MULs_func: ALU_OP = 5'b10101;
-                    DIVs_func: ALU_OP = 5'b10110;
-                    INVRSs_func: ALU_OP = 5'b10111;
-                    ROUNDs_func: ALU_OP = 5'b11000;
+                    ADDs_func:
+                    begin
+                        ALU_OP = 5'b10011;
+                        register_write = 0;
+                        fregister_write = 1;
+                    end
+                    SUBs_func:
+                    begin
+                        ALU_OP = 5'b10100;
+                        register_write = 0;
+                        fregister_write = 1;
+                    end
+                    MULs_func:
+                    begin
+                        ALU_OP = 5'b10101;
+                        register_write = 0;
+                        fregister_write = 1;
+                    end
+                    DIVs_func:
+                    begin
+                        ALU_OP = 5'b10110;
+                        register_write = 0;
+                        fregister_write = 1;
+                    end
+                    INVRSs_func:
+                    begin
+                        ALU_OP = 5'b10111;
+                        register_write = 0;
+                        fregister_write = 1;
+                    end
+                    ROUNDs_func:
+                    begin
+                        ALU_OP = 5'b11000;
+                        register_write = 0;
+                        fregister_write = 1;
+                    end
                     JR_func:
                     begin
                         ALU_OP = 5'b01100;
@@ -185,6 +223,40 @@ module Controller(
                     end
                     default: ALU_OP = 5'b00100;
                 endcase
+            end
+
+            MTC_code:
+            begin
+                is_nop = 0;
+                destination_register = 2'b00;
+                jump = 0;
+                branch = 0;
+                jump_register = 0;
+                we_memory = 0;
+                ALU_src = 0;
+                ALU_OP = 5'b00000;
+                register_src = 2'b11;
+                fregister_src = 2'b01;
+                register_write = 0;
+                fregister_write = 1;
+                is_unsigned = 0;
+            end
+
+            MFC_code:
+            begin
+                is_nop = 0;
+                destination_register = 2'b01;
+                jump = 0;
+                branch = 0;
+                jump_register = 0;
+                we_memory = 0;
+                ALU_src = 0;
+                ALU_OP = 5'b11001;
+                register_src = 2'b11;
+                fregister_src = 2'b00;
+                register_write = 1;
+                fregister_write = 0;
+                is_unsigned = 0;
             end
 
             ADDI_code:
@@ -198,7 +270,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -213,7 +287,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 1;
             end
 
@@ -228,7 +304,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b01010;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 1;
             end
 
@@ -243,7 +321,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00000;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 1;
             end
 
@@ -258,7 +338,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b01000;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 1;
             end
 
@@ -273,7 +355,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b01;
+                fregister_src = 2'b00;
                 register_write = 1'b0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -288,7 +372,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b01;
+                fregister_src = 2'b00;
                 register_write = 1'b0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -303,7 +389,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1'b0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -318,7 +406,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00100;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1'b0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -333,7 +423,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b01101;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -348,7 +440,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b01110;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -363,7 +457,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b01111;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -378,7 +474,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b10000;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -393,7 +491,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b10001;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -408,7 +508,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b01011;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -423,7 +525,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b10010;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 1;
             end
 
@@ -438,7 +542,9 @@ module Controller(
                 ALU_src = 0;
                 ALU_OP = 5'b00100;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 0;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -453,7 +559,9 @@ module Controller(
                 ALU_src = 0;
                 ALU_OP = 5'b00100;
                 register_src = 2'b10;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
 
@@ -468,7 +576,9 @@ module Controller(
                 ALU_src = 1;
                 ALU_OP = 5'b00000;
                 register_src = 2'b00;
+                fregister_src = 2'b00;
                 register_write = 1;
+                fregister_write = 0;
                 is_unsigned = 0;
             end
         endcase
