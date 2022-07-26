@@ -48,6 +48,8 @@ module mips_core(
     wire zero_if;
     wire [31:0] imm_extend_ex;
     wire [31:0] imm_extend_mem;
+    wire register_write_wb_cache;
+    wire lock;
 
     assign inst_if = inst;
 
@@ -61,7 +63,7 @@ module mips_core(
         .branch(branch_if),
         .imm_extend(imm_extend_mem),
         .zero(zero_if),
-        .pc_enable(pc_enable_if),
+        .pc_enable(pc_enable),
         .halted_controller(halted_controller_if),
         .is_nop(is_nop_if),
         .clk(clk)
@@ -77,7 +79,8 @@ module mips_core(
         .inst_if(inst_if),
         .inst_id(inst_id),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
     wire [5:0] inst_50_id;
@@ -131,7 +134,7 @@ module mips_core(
         .ALU_src(ALU_src_id),
         .ALU_OP(ALU_OP_id),
         .register_write_out(register_write_id),
-        .register_write_in(register_write_wb),
+        .register_write_in(register_write_wb | register_write_wb_cache),
         .register_src(register_src_id),
         .jump(jump_id),
         .jump_register(jump_register_id),
@@ -250,7 +253,8 @@ module mips_core(
         .halted_controller_id(halted_controller_in_id),
         .halted_controller_ex(halted_controller_in_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
     wire [31:0] ALU_result_ex;
@@ -292,9 +296,6 @@ module mips_core(
         .clk(clk)
     );
 
-    always $display("time: %d, ALU_src_ex: %b", $time, ALU_src_ex);
-
-
     wire [31:0] inst_addr_in_mem;
     wire [31:0] inst_addr_out_mem;
     wire register_write_in_mem;
@@ -318,6 +319,7 @@ module mips_core(
 
     wire [31:0] inst_mem_in;
     wire [31:0] inst_mem_out;
+    wire temp;
 
     Buffer_EX_MEM Buffer_EX_MEM(
         .inst_addr_ex(inst_addr_in_ex),
@@ -358,23 +360,27 @@ module mips_core(
         .jump_mem(jump_if),
         .branch_mem(branch_if),
         .zero_mem(zero_if),
-        .pc_enable_mem(pc_enable_if),
+        .pc_enable_mem(temp),
         .is_nop_mem(is_nop_if),
         .halted_controller_ex(halted_controller_in_ex),
         .halted_controller_mem(halted_controller_in_mem),
         .imm_extend_ex(imm_extend_ex),
         .imm_extend_mem(imm_extend_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
     wire halted_controller_out_mem;
     wire [7:0] cache_data_out_mem[0:3];
     wire [1:0] byte_number_mem;
+    wire is_word;
+    wire register_write;
 
     MEM MEM(
         .inst_mem_in(inst_mem_in),
         .register_write_in(register_write_in_mem),
+        .register_write(register_write),
         .register_src_in(register_src_in_mem),
         .ALU_result_in(ALU_result_in_mem),
         .rd_num_in(rd_num_in_mem),
@@ -385,6 +391,7 @@ module mips_core(
         .set_valid(set_valid_mem),
         .memory_address_type(memory_address_type_mem),
         .is_word_in(is_word_in_mem),
+        .is_word(is_word),
         .mem_addr(mem_addr),
         .mem_data_out(mem_data_out),
         .mem_data_in(mem_data_in),
@@ -395,6 +402,8 @@ module mips_core(
         .rt_data(rt_data_mem),
         .byte_number(byte_number_mem),
         .halted_controller_in(halted_controller_in_mem),
+        .pc_enable(pc_enable),
+        .lock(lock),
         .clk(clk)
     );
 
@@ -420,9 +429,11 @@ module mips_core(
         .rd_num_mem(rd_num_in_mem),
         .register_src_mem(register_src_in_mem),
         .register_write_mem(register_write_in_mem),
-        .is_word_mem(is_word_in_mem),
-        .mem_data_in_mem(mem_data_in_mem[0:3]),
-        .cache_data_out_mem(cache_data_out_mem[0:3]),
+        .register_write(register_write),
+        .register_write_wb_cache(register_write_wb_cache),
+        .is_word_mem(is_word),
+        .mem_data_in_mem(mem_data_in_mem),
+        .cache_data_out_mem(cache_data_out_mem),
         .byte_number_mem(byte_number_mem),
         .inst_addr_wb(inst_addr_wb),
         .mem_addr_wb(mem_addr_wb),
@@ -437,7 +448,8 @@ module mips_core(
         .halted_controller_mem(halted_controller_in_mem),
         .halted_controller_wb(halted_controller_in_wb),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
     WB WB(
@@ -453,6 +465,6 @@ module mips_core(
         .clk(clk)
     );
 
-    always $display("time: %d, rd_num_wb: %d", $time, rd_num_in_wb);
+    always $display("time: %d, cache_data_out_wb: %h, register_src_wb: %b, is_word: %b, register_write_wb: %b", $time, cache_data_out_wb, register_src_wb, is_word, register_write_wb);
 
 endmodule

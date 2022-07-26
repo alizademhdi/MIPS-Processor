@@ -44,8 +44,8 @@ module Buffer_EX_MEM(
     is_nop_mem,
     halted_controller_mem,
     clk,
-    rst_b
-
+    rst_b,
+    lock
 );
 
     input [31:0] inst_addr_ex;
@@ -72,6 +72,7 @@ module Buffer_EX_MEM(
     input pc_enable_ex;
     input is_nop_ex;
     input [31:0] imm_extend_ex;
+    input lock;
 
     output [31:0] inst_addr_mem;
     output [31:0] inst_mem_in;
@@ -96,165 +97,188 @@ module Buffer_EX_MEM(
     output halted_controller_mem;
     output [31:0] imm_extend_mem;
 
-    dff #(32) imm_extend(
+    lock_dff #(32) imm_extend(
         .d(imm_extend_ex),
         .q(imm_extend_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) inst(
+    lock_dff #(32) inst(
         .d(inst_ex_out),
         .q(inst_mem_in),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff jump_register(
+    lock_dff jump_register(
         .d(jump_register_ex),
         .q(jump_register_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff jump(
+    lock_dff jump(
         .d(jump_ex),
         .q(jump_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff branch(
+    lock_dff branch(
         .d(branch_ex),
         .q(branch_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff zero(
+    lock_dff zero(
         .d(zero_ex),
         .q(zero_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff pc_enable(
+    lock_dff pc_enable(
         .d(pc_enable_ex),
         .q(pc_enable_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff is_nop(
+    lock_dff is_nop(
         .d(is_nop_ex),
         .q(is_nop_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff halted(
+    lock_dff halted(
         .d(halted_controller_ex),
         .q(halted_controller_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) inst_addr_dff(
+    lock_dff #(32) inst_addr_lock_dff(
         .d(inst_addr_ex),
         .q(inst_addr_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) register_write_dff(
+    lock_dff #(1) register_write_lock_dff(
         .d(register_write_ex),
         .q(register_write_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(2) register_src_dff(
+    lock_dff #(2) register_src_lock_dff(
         .d(register_src_ex),
         .q(register_src_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) ALU_result_dff(
+    lock_dff #(32) ALU_result_lock_dff(
         .d(ALU_result_ex),
         .q(ALU_result_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) rt_data_dff(
+    lock_dff #(32) rt_data_lock_dff(
         .d(rt_data_ex),
         .q(rt_data_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(5) rd_num_dff(
+    lock_dff #(5) rd_num_lock_dff(
         .d(rd_num_ex),
         .q(rd_num_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) we_cache_dff(
+    lock_dff #(1) we_cache_lock_dff(
         .d(we_cache_ex),
         .q(we_cache_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) we_memory_dff(
+    lock_dff #(1) we_memory_lock_dff(
         .d(we_memory_ex),
         .q(we_memory_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) cache_input_type_dff(
+    lock_dff #(1) cache_input_type_lock_dff(
         .d(cache_input_type_ex),
         .q(cache_input_type_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) set_dirty_dff(
+    lock_dff #(1) set_dirty_lock_dff(
         .d(set_dirty_ex),
         .q(set_dirty_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) set_valid_dff(
+    lock_dff #(1) set_valid_lock_dff(
         .d(set_valid_ex),
         .q(set_valid_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) memory_address_type_dff(
+    lock_dff #(1) memory_address_type_lock_dff(
         .d(memory_address_type_ex),
         .q(memory_address_type_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) is_word_dff(
+    lock_dff #(1) is_word_lock_dff(
         .d(is_word_ex),
         .q(is_word_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) halted_controller_dff(
+    lock_dff #(1) halted_controller_lock_dff(
         .d(halted_controller_ex),
         .q(halted_controller_mem),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
     // always $display("time: %d, ALU_result_ex: %d, ALU_result_mem: %d", $time, ALU_result_ex, ALU_result_mem);

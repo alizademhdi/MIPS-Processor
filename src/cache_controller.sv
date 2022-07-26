@@ -8,10 +8,10 @@ module CacheController(
     memory_address_type,
     is_word,
     register_write,
-    lock,
     set_dirty,
     set_valid,
     pc_enable,
+    lock,
     clk
 );
 
@@ -26,10 +26,10 @@ module CacheController(
     output reg memory_address_type;
     output reg is_word;
     output reg register_write;
-    output reg lock;
     output reg set_dirty;
     output reg set_valid;
     output reg pc_enable;
+    output reg lock;
 
     parameter LW_code = 6'b100011;
     parameter SW_code = 6'b101011;
@@ -64,17 +64,20 @@ module CacheController(
         we_cache <= 1'b0;
         cache_input_type <= 1'b1;
         is_word <= (opcode == LW_code) || (opcode == SW_code);
+        register_write <= 0;
 
         case (p_state)
             S0: begin
                 // start of lw
                 if (opcode == LW_code || opcode == LB_code) begin
                     if (cache_hit) begin
+                        lock <= 0;
                         n_state <= S0;
                         register_write <= 1'b1;
                         pc_enable <= 1'b1;
                     end
                     else begin
+                        lock <= 1;
                         pc_enable <= 1'b0;
                         register_write <= 1'b0;
                         if (cache_dirty) begin
@@ -94,6 +97,7 @@ module CacheController(
                         we_memory <= 1'b1;
                         pc_enable <= 1'b0;
                         memory_address_type <= 1'b1;
+                        lock <= 1;
                     end
                     else begin
                         we_cache <= 1'b1;
@@ -102,11 +106,13 @@ module CacheController(
                         set_dirty <= 1'b1;
                         set_valid <= 1'b1;
                         n_state <= S0;
+                        lock <= 0;
                     end
                 end
                 else begin
                     n_state <= S0;
                     pc_enable <= 1'b1;
+                    lock <= 0;
                 end
             end
 
@@ -143,6 +149,7 @@ module CacheController(
                     set_valid <= 1'b1;
                     set_dirty <= 1'b1;
                     pc_enable <= 1'b1;
+                    lock <= 0;
                 end
             end
 
@@ -151,6 +158,7 @@ module CacheController(
                     register_write <= 1'b1;
                     pc_enable <= 1'b1;
                     n_state <= S0;
+                    lock <= 0;
                 end
             end
 
@@ -178,6 +186,7 @@ module CacheController(
                 register_write <= 1'b1;
                 pc_enable <= 1'b1;
                 n_state <= S0;
+                lock <= 0;
             end
 
             default: n_state <= S0;

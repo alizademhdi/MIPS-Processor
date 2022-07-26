@@ -58,7 +58,8 @@ module Buffer_ID_EX(
     memory_address_type_ex,
     is_word_ex,
     clk,
-    rst_b
+    rst_b,
+    lock
 );
 
     input [31:0] inst_addr_id;
@@ -92,6 +93,7 @@ module Buffer_ID_EX(
     input is_nop_id;
     input clk;
     input rst_b;
+    input lock;
 
     output [31:0] inst_ex;
     output [31:0] inst_ex_in;
@@ -125,216 +127,244 @@ module Buffer_ID_EX(
 
     // initial $monitor("reg_we: %b", register_write_id);
 
-    dff halted(
+    lock_dff halted(
         .d(halted_controller_id),
         .q(halted_controller_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff is_nop(
+    lock_dff is_nop(
         .d(is_nop_id),
         .q(is_nop_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) inst_dff(
+    lock_dff #(32) inst_lock_dff(
         .d(inst_id),
         .q(inst_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) inst_2_dff(
+    lock_dff #(32) inst_2_lock_dff(
         .d(inst_id_out),
         .q(inst_ex_in),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) inst_addr_dff(
+    lock_dff #(32) inst_addr_lock_dff(
         .d(inst_addr_id),
         .q(inst_addr_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) rs_data_diff(
+    lock_dff #(32) rs_data_diff(
         .d(rs_data_id),
         .q(rs_data_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) rt_data_dff(
+    lock_dff #(32) rt_data_lock_dff(
         .d(rt_data_id),
         .q(rt_data_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(6) inst_50_dff(
+    lock_dff #(6) inst_50_lock_dff(
         .d(inst_50_id),
         .q(inst_50_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(5) inst_2016_dff(
+    lock_dff #(5) inst_2016_lock_dff(
         .d(inst_2016_id),
         .q(inst_2016_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(5) inst_1511_dff(
+    lock_dff #(5) inst_1511_lock_dff(
         .d(inst_1511_id),
         .q(inst_1511_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(5) inst_106_dff(
+    lock_dff #(5) inst_106_lock_dff(
         .d(inst_106_id),
         .q(inst_106_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(2) destination_register_dff(
+    lock_dff #(2) destination_register_lock_dff(
         .d(destination_register_id),
         .q(destination_register_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) ALU_src_dff(
+    lock_dff #(1) ALU_src_lock_dff(
         .d(ALU_src_id),
         .q(ALU_src_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(5) ALU_OP_dff(
+    lock_dff #(5) ALU_OP_lock_dff(
         .d(ALU_OP_id),
         .q(ALU_OP_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) we_memory_dff(
+    lock_dff #(1) we_memory_lock_dff(
         .d(we_memory_id),
         .q(we_memory_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) register_write_dff(
+    lock_dff #(1) register_write_lock_dff(
         .d(register_write_id),
         .q(register_write_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(2) register_src_dff(
+    lock_dff #(2) register_src_lock_dff(
         .d(register_src_id),
         .q(register_src_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) handler_controller_dff(
+    lock_dff #(1) handler_controller_lock_dff(
         .d(halted_controller_id),
         .q(halted_controller_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) branch_dff(
+    lock_dff #(1) branch_lock_dff(
         .d(branch_id),
         .q(branch_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) jump_dff(
+    lock_dff #(1) jump_lock_dff(
         .d(jump_id),
         .q(jump_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) pc_enable_dff(
+    lock_dff #(1) pc_enable_lock_dff(
         .d(pc_enable_id),
         .q(pc_enable_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) jump_register_dff(
+    lock_dff #(1) jump_register_lock_dff(
         .d(jump_register_id),
         .q(jump_register_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(26) jea_dff(
+    lock_dff #(26) jea_lock_dff(
         .d(jea_id),
         .q(jea_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(32) imm_extend_dff(
+    lock_dff #(32) imm_extend_lock_dff(
         .d(imm_extend_id),
         .q(imm_extend_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    always $display("time: %d, imm_id: %d, imm_ex: %d", $time, imm_extend_id, imm_extend_ex);
-
-    dff #(1) cache_input_type_dff(
+    lock_dff #(1) cache_input_type_lock_dff(
         .d(cache_input_type_id),
         .q(cache_input_type_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) we_cache_dff(
+    lock_dff #(1) we_cache_lock_dff(
         .d(we_cache_id),
         .q(we_cache_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) set_dirty_dff(
+    lock_dff #(1) set_dirty_lock_dff(
         .d(set_dirty_id),
         .q(set_dirty_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) set_valid_dff(
+    lock_dff #(1) set_valid_lock_dff(
         .d(set_valid_id),
         .q(set_valid_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) mempory_address_type_dff(
+    lock_dff #(1) mempory_address_type_lock_dff(
         .d(memory_address_type_id),
         .q(memory_address_type_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
-    dff #(1) is_word_dff(
+    lock_dff #(1) is_word_lock_dff(
         .d(is_word_id),
         .q(is_word_ex),
         .clk(clk),
-        .rst_b(rst_b)
+        .rst_b(rst_b),
+        .lock(lock)
     );
 
 endmodule

@@ -2,6 +2,7 @@ module MEM(
     inst_mem_in,
     register_write_in,
     register_src_in,
+    register_write,
     ALU_result_in,
     rd_num_in,
     we_cache,
@@ -11,6 +12,7 @@ module MEM(
     set_valid,
     memory_address_type,
     is_word_in,
+    is_word,
     mem_addr,
     mem_data_out,
     mem_data_in,
@@ -21,6 +23,8 @@ module MEM(
     rt_data,
     byte_number,
     halted_controller_in,
+    pc_enable,
+    lock,
     clk
 );
 
@@ -48,15 +52,19 @@ module MEM(
     output reg [7:0] cache_data_out[0:3];
     output reg [1:0] byte_number;
     output we_memory;
+    output pc_enable;
+    output is_word;
+    output lock;
+    output register_write;
 
     assign mem_data_in[0] = cache_data_out[0];
     assign mem_data_in[1] = cache_data_out[1];
     assign mem_data_in[2] = cache_data_out[2];
     assign mem_data_in[3] = cache_data_out[3];
 
-    always @(memory_address_type)
+    always @(memory_address_type2)
     begin
-        if (memory_address_type) begin
+        if (memory_address_type2) begin
             mem_addr = memory_write_address;
         end
         else begin
@@ -72,8 +80,10 @@ module MEM(
     wire we_cache2;
     wire cache_input_type2;
     wire memory_address_type2;
-    wire is_word2;
+    wire is_word;
     wire register_write2;
+    wire set_dirty2;
+    wire set_valid2;
 
     assign opcode = inst_mem_in == 32'b0 ? 6'b111111 : inst_mem_in[31:26];
 
@@ -86,9 +96,9 @@ module MEM(
         .we_cache(we_cache2),
         .cache_addr(ALU_result_in),
         .data_in(cache_data_in2),
-        .set_valid(set_valid),
-        .set_dirty(set_dirty),
-        .is_word(is_word_in),
+        .set_valid(set_valid2),
+        .set_dirty(set_dirty2),
+        .is_word(is_word),
         .clk(clk)
     );
 
@@ -100,17 +110,17 @@ module MEM(
         .we_cache(we_cache2),
         .cache_input_type(cache_input_type2),
         .memory_address_type(memory_address_type2),
-        .is_word(is_word2),
-        .register_write(register_write2),
-        .lock(),
-        .set_dirty(),
-        .set_valid(),
-        .pc_enable(),
+        .is_word(is_word),
+        .register_write(register_write),
+        .set_dirty(set_dirty2),
+        .set_valid(set_valid2),
+        .pc_enable(pc_enable),
+        .lock(lock),
         .clk(clk)
     );
 
     assign cache_data_in2 = cache_input_type2 == 1'b0 ? {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]} : rt_data;
 
-    // always $display("time: %d, ALU_result_out_mem: %d", $time, ALU_result_out);
+    always $display("time: %d, lock: %b, opcode: %b, address: %h, we_memory: %b, cache_data_out: %h", $time, lock, opcode, memory_write_address, we_memory, cache_data_out);
 
 endmodule
