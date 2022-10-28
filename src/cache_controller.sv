@@ -193,6 +193,4 @@ module CacheController(
         endcase
     end
 
-    // always $display("time: %d, cache_input_type: %b", $time, cache_input_type);
-
 endmodule

@@ -50,6 +50,4 @@ module pc_controller(
         end
     end
 
-    // always $display("time: %d, pc_enable: %b, pc: %d, jump: %b, jaddr: %d, jump_register: %b, branch: %b, zero: %b, is_nop: %b, baddr: %d, rs_data: %d\n", $time, pc_enable, pc, jump, jaddr, jump_register, branch, zero, is_nop, baddr, rs_data);
-
 endmodule

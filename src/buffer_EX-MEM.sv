@@ -353,7 +353,5 @@ module Buffer_EX_MEM(
         .lock(lock)
     );
 
-    // always $display("time: %d, ALU_result_ex: %d, ALU_result_mem: %d", $time, ALU_result_ex, ALU_result_mem);
-
 
 endmodule

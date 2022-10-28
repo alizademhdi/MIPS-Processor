@@ -162,6 +162,5 @@ module ID(
         .is_unsign_extend(is_unsigned)
     );
 
-    // always $display("time: %d, first_reg: %d, second_reg: %d, imm: %d", $time, rs_data, rt_data, imm_extend);
 
 endmodule

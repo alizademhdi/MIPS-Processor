@@ -82,6 +82,4 @@ module WB(
             endcase
         end
 
-    // always $display("time: %d, ALU_result_out_wb: %d, rd_data: %d, halted: %b", $time, ALU_result, rd_data, halted_controller);
-
 endmodule

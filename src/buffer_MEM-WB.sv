@@ -245,7 +245,5 @@ module Buffer_MEM_WB(
         .lock(lock)
     );
 
-    // DO NOT REMOVE THIS LINE!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // always $display("time: %d, register_write_mem: %b", $time, register_write_mem);
 
 endmodule

@@ -456,6 +456,4 @@ module floating_point_ALU(
         endcase
     end
 
-    // always $display("time: %d, data_in1: %h, data_in2: %h, data_out: %h, mantissa_output: %h", $time, data_in1, data_in2, data_out, mantissa_output);
-
 endmodule

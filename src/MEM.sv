@@ -121,6 +121,4 @@ module MEM(
 
     assign cache_data_in2 = cache_input_type2 == 1'b0 ? {mem_data_out[3], mem_data_out[2], mem_data_out[1], mem_data_out[0]} : rt_data;
 
-    // always $display("time: %d, lock: %b, opcode: %b, address: %h, we_memory: %b, cache_data_out: %h", $time, lock, opcode, memory_write_address, we_memory, cache_data_out);
-
 endmodule
