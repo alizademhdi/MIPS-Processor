@@ -1,8 +1,8 @@
 
-# MIPS Proseccor
+# MIPS Processor
 
 ## About
-In this project we design a simple mips proseccor in phase one with SystemVerilog and after that we add multicycle memory and cache in phase two and then in phase three we add pipelines to mips machine. in phase four we design a floating-point coproseccor and register file for store floating-point numbers.<br />
+In this project we design a simple mips processor in phase one with SystemVerilog and after that we add multicycle memory and cache in phase two and then in phase three we add pipelines to mips machine. in phase four we design a floating-point coprocessor and register file for store floating-point numbers.<br />
 In the end, we have written a series of tests to check the correct operation of the processor in the test folder, which you can see in the `test` folder.
 
 
